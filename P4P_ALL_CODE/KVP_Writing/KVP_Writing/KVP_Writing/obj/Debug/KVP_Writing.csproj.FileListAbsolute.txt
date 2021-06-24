@@ -1,0 +1,9 @@
+C:\Users\drago\OneDrive\Documents\700P4P\KVP_Writing\KVP_Writing\KVP_Writing\bin\Debug\KVP_Writing.exe.config
+C:\Users\drago\OneDrive\Documents\700P4P\KVP_Writing\KVP_Writing\KVP_Writing\bin\Debug\KVP_Writing.exe
+C:\Users\drago\OneDrive\Documents\700P4P\KVP_Writing\KVP_Writing\KVP_Writing\bin\Debug\KVP_Writing.pdb
+C:\Users\drago\OneDrive\Documents\700P4P\KVP_Writing\KVP_Writing\KVP_Writing\bin\Debug\KVBInterface.dll
+C:\Users\drago\OneDrive\Documents\700P4P\KVP_Writing\KVP_Writing\KVP_Writing\obj\Debug\KVP_Writing.csprojAssemblyReference.cache
+C:\Users\drago\OneDrive\Documents\700P4P\KVP_Writing\KVP_Writing\KVP_Writing\obj\Debug\KVP_Writing.csproj.CoreCompileInputs.cache
+C:\Users\drago\OneDrive\Documents\700P4P\KVP_Writing\KVP_Writing\KVP_Writing\obj\Debug\KVP_Writing.csproj.CopyComplete
+C:\Users\drago\OneDrive\Documents\700P4P\KVP_Writing\KVP_Writing\KVP_Writing\obj\Debug\KVP_Writing.exe
+C:\Users\drago\OneDrive\Documents\700P4P\KVP_Writing\KVP_Writing\KVP_Writing\obj\Debug\KVP_Writing.pdb

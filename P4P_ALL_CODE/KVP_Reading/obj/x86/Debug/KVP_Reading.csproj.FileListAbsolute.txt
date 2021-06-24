@@ -1,0 +1,8 @@
+C:\Users\drago\OneDrive\Documents\709\KVP_Reading\bin\Debug\ConsoleApplication.exe
+C:\Users\drago\OneDrive\Documents\709\KVP_Reading\bin\Debug\ConsoleApplication.pdb
+C:\Users\drago\OneDrive\Documents\709\KVP_Reading\bin\Debug\KVBInterface.dll
+C:\Users\drago\OneDrive\Documents\709\KVP_Reading\obj\x86\Debug\KVP_Reading.csprojAssemblyReference.cache
+C:\Users\drago\OneDrive\Documents\709\KVP_Reading\obj\x86\Debug\KVP_Reading.csproj.CoreCompileInputs.cache
+C:\Users\drago\OneDrive\Documents\709\KVP_Reading\obj\x86\Debug\KVP_Reading.csproj.CopyComplete
+C:\Users\drago\OneDrive\Documents\709\KVP_Reading\obj\x86\Debug\ConsoleApplication.exe
+C:\Users\drago\OneDrive\Documents\709\KVP_Reading\obj\x86\Debug\ConsoleApplication.pdb

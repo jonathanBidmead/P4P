@@ -1,0 +1,10 @@
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Debug\KUKAVARPROXY Client.exe
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Debug\KUKAVARPROXY Client.exe.config
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Debug\KUKAVARPROXY Client.pdb
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Debug\KUKAVARPROXY Client.xml
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Debug\KUKAVARPROXY_Client.Form1.resources
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Debug\KUKAVARPROXY_Client.Resources.resources
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Debug\KUKAVARPROXY Client.vbproj.GenerateResource.Cache
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Debug\KUKAVARPROXY Client.exe
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Debug\KUKAVARPROXY Client.xml
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Debug\KUKAVARPROXY Client.pdb

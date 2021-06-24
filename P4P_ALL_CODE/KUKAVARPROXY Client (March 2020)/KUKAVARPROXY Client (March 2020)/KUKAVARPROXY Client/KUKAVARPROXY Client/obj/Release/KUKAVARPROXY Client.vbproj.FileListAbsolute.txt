@@ -1,0 +1,42 @@
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Release\KUKAVARPROXY Client.exe.config
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Release\KUKAVARPROXY Client.exe
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Release\KUKAVARPROXY Client.pdb
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Release\KUKAVARPROXY Client.xml
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY_Client.Form1.resources
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY_Client.Resources.resources
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY Client.vbproj.GenerateResource.Cache
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY Client.exe
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY Client.xml
+E:\Progetti Visual Studio\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY Client.pdb
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Release\KUKAVARPROXY Client.exe.config
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY Client.exe
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY Client.xml
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY Client.pdb
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY_Client.Form1.resources
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY_Client.Resources.resources
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY Client.vbproj.GenerateResource.Cache
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Release\KUKAVARPROXY Client.exe
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Release\KUKAVARPROXY Client.pdb
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Release\KUKAVARPROXY Client.xml
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Release\KUKAVARPROXY Client.exe.config
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY Client.exe
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY Client.xml
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY Client.pdb
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Release\KUKAVARPROXY Client.exe
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Release\KUKAVARPROXY Client.pdb
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Release\KUKAVARPROXY Client.xml
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY_Client.Form1.resources
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY_Client.Resources.resources
+C:\Users\ddigloria\Desktop\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY Client.vbproj.GenerateResource.Cache
+C:\Users\drago\OneDrive\Documents\700P4P\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY Client.exe
+C:\Users\drago\OneDrive\Documents\700P4P\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY Client.xml
+C:\Users\drago\OneDrive\Documents\700P4P\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY Client.pdb
+C:\Users\drago\OneDrive\Documents\700P4P\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Release\KUKAVARPROXY Client.exe.config
+C:\Users\drago\OneDrive\Documents\700P4P\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Release\KUKAVARPROXY Client.exe
+C:\Users\drago\OneDrive\Documents\700P4P\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Release\KUKAVARPROXY Client.pdb
+C:\Users\drago\OneDrive\Documents\700P4P\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\bin\Release\KUKAVARPROXY Client.xml
+C:\Users\drago\OneDrive\Documents\700P4P\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY Client.vbprojAssemblyReference.cache
+C:\Users\drago\OneDrive\Documents\700P4P\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY_Client.Form1.resources
+C:\Users\drago\OneDrive\Documents\700P4P\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY_Client.Resources.resources
+C:\Users\drago\OneDrive\Documents\700P4P\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY Client.vbproj.GenerateResource.cache
+C:\Users\drago\OneDrive\Documents\700P4P\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client (March 2020)\KUKAVARPROXY Client\KUKAVARPROXY Client\obj\Release\KUKAVARPROXY Client.vbproj.CoreCompileInputs.cache
