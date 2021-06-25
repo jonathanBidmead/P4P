@@ -550,7 +550,7 @@ namespace RobVisKUKA
         {
 
             textBox1.AppendText("Starting with default values.\n");
-            KVP.IP = "10.104.117.2";
+            KVP.IP = "10.104.117.1";
             KVP.Port = 7000;
             KVP.timeout = 100;
 
@@ -994,7 +994,7 @@ namespace RobVisKUKA
             KVP.Disconnect();
 
             KVP = new KVPInterface();
-            KVP.IP = "10.104.117.2";
+            KVP.IP = "10.104.117.1";
             KVP.Port = 7000;
             KVP.timeout = 100;
             ConnectKVP();

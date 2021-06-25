@@ -249,6 +249,8 @@ Public Class KVPInterface
                 Return False
             End If
         Catch ex As Exception
+            MessageBox.Show(ex.Message)
+
             isConnected = False
             'MsgBox("WriteVariable ServerStream err")
             Return False
@@ -268,5 +270,6 @@ Public Class KVPInterface
         Dim RSP_read_status As Integer = RSP_packet(7 + RSP_val_len + 1)
 
         Return RSP_read_status > 0 And RSP_packet(0) = PKT_req_id(0) And RSP_packet(1) = PKT_req_id(1)
+
     End Function
 End Class

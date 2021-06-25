@@ -9,7 +9,7 @@ namespace Reading
 
         private void KVPConnect()//attempts to connect, retries every 2s until success
         {
-            string IP = "10.104.117.2";
+            string IP = "10.104.117.1";
             int port = 7000;
             bool success;
 
@@ -32,7 +32,7 @@ namespace Reading
             KVPConnect();
             Console.ReadKey();
             while (true) {
-                string varName = "$AXIS_ACT";
+                string varName = "$POS_ACT";
                 KVPInterface.ReadResult result = GetReadResult(varName);
                 Console.WriteLine(result.value);
                 System.Threading.Thread.Sleep(100);
