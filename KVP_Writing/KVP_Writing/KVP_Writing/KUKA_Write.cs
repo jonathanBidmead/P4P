@@ -42,7 +42,7 @@ namespace KVP_Writing
                 success = KVP.WriteVariable(varName, value);
                 status = success ? "Success" : "Failure";
                 Console.WriteLine(status);
-                Console.ReadKey();
+                //Console.ReadKey();
                 
             } while (!success);
             return success;
@@ -69,16 +69,35 @@ namespace KVP_Writing
             Console.WriteLine("Connected, Awaiting User Confirmation (keypress)");
             Console.ReadKey();
             string status;
-            string varName = "$POS_ACT";
-            displayReadFromKUKA(varName);//reading current position
-            KVPInterface.ReadResult output = GetReadResult(varName);
             bool step = writeToKUKA("my_step", "TRUE");
-            //status = step ? "success" : "failure";
-            //console.write("writing to my_step: ");
-            //console.writeline(status);
-            //string value = "{A1 0.0,A2 -90.0,A3 90.0,A4 0.0,A5 0.0,A6 0.0,E1 0.0,E2 0.0,E3 0.0,E4 0.0,E5 0.0,E6 0.0}";
-            string val_string = String.Format("{{X {0:0.##}, Y {1:0.##}, Z {2:0.##}, A {3:0.##}, B {4:0.##}, C {5:0.##}}}", 500, 100, 0, 0, 0, 0);
-            bool success = writeToKUKA("my_inc", val_string);
+            Console.WriteLine("Start?:");
+            string input = Console.ReadLine();
+            string val_string = "";
+            bool success = false;
+            //System.Threading.Thread.Sleep(3000);
+            //val_string = String.Format("{{X {0:0.##}, Y {1:0.##}, Z {2:0.##}, A {3:0.##}, B {4:0.##}, C {5:0.##}}}", 0, 0, 0, 0, 0, 0);
+            //success = writeToKUKA("my_inc", val_string);
+            //while(input != "q")
+            //{
+            //    Console.WriteLine("Enter x:");
+            //    input = Console.ReadLine();
+            //    string val_string = String.Format("{{X {0:0.##}, Y {1:0.##}, Z {2:0.##}, A {3:0.##}, B {4:0.##}, C {5:0.##}}}", 0, 0, Int16.Parse(input), 0, 0, 0);
+            //    bool success = writeToKUKA("my_inc", val_string);
+            //    System.Threading.Thread.Sleep(500);
+            //    val_string = String.Format("{{X {0:0.##}, Y {1:0.##}, Z {2:0.##}, A {3:0.##}, B {4:0.##}, C {5:0.##}}}", 0, 0, 0, 0, 0, 0);
+            //    success = writeToKUKA("my_inc", val_string);
+
+            //}
+            int[] X = new int[] { 10, 0, -10, 0, 10, 0, -10, 0, 10, 0 };
+            int[] Y = new int[] { 0, 10, 0, -10, 0, 10, 0, -10, 0, 0 };
+            int scale = 8;
+            for (int i = 0; i < 10; i++)
+            {
+                success = writeToKUKA("my_step", "TRUE");
+                val_string = String.Format("{{X {0:0.##}, Y {1:0.##}, Z {2:0.##}, A {3:0.##}, B {4:0.##}, C {5:0.##}}}", scale*X[i], scale*Y[i], 0, 0, 0, 0);
+                success = writeToKUKA("my_inc", val_string);
+                System.Threading.Thread.Sleep(500);
+            }
             Console.ReadKey();
 
         }
