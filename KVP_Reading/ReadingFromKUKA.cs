@@ -12,12 +12,16 @@ namespace Reading
             string IP = "10.104.117.1";
             int port = 7000;
             bool success;
+            string status;
 
             do
             {
+                Console.Write("Attempting to Connect: ");
                 success = KVP.Connect(IP, port, 1000);
-                Console.WriteLine(success);
-                System.Threading.Thread.Sleep(2000);
+                status = success ? "Success" : "Failure";
+                Console.WriteLine(status);
+                System.Threading.Thread.Sleep(200);
+
             } while (!success);
             
         }
@@ -27,15 +31,22 @@ namespace Reading
             return KVP.ReadVariable(varName);
         }
 
+        private void readFromKUKA(string varName)
+        {
+            Console.Write("Reading Variable: ");
+            Console.Write(varName);
+            Console.Write(" Value: ");
+            KVPInterface.ReadResult result = GetReadResult(varName);
+            Console.WriteLine(result.value);
+        }
         public void run()
         {
             KVPConnect();
+            Console.WriteLine("Awaiting User Confirmation (keypress)");
             Console.ReadKey();
             while (true) {
-                string varName = "$POS_ACT";
-                KVPInterface.ReadResult result = GetReadResult(varName);
-                Console.WriteLine(result.value);
-                System.Threading.Thread.Sleep(100);
+                readFromKUKA("my_rel");
+                System.Threading.Thread.Sleep(500);
             }
             //Console.ReadKey();
 
