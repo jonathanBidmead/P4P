@@ -90,14 +90,14 @@ namespace KVP_Writing
             //}
             //int[] X = new int[] { 10, 0, -10, 0, 10, 0, -10, 0, 10, 0 };
             //int[] Y = new int[] { 0, 10, 0, -10, 0, 10, 0, -10, 0, 0 };
-            int scale = 15;
+            int scale = 40;
             bool readyForNextInput = false;
             //for every command in X and Y, if motion command is finished, write new 
             int i = 0;
-            int maxIter = 50;
+            int maxIter = 30;
             double angle = 2*Math.PI*i/maxIter;
-            Console.WriteLine(2 * Math.PI * 50 / maxIter);
-            while (i < maxIter)
+            //Console.WriteLine(2 * Math.PI * 50 / maxIter);
+            while (i < maxIter+1)
             {
                 readyForNextInput = (GetReadResult("my_step").value == "FALSE") ? true:false;//ready for next input if "my_step" val == "FALSE"
                 if (readyForNextInput)
