@@ -35,9 +35,20 @@ namespace Reading
         {
             Console.Write("Reading Variable: ");
             Console.Write(varName);
-            Console.Write(" Value: ");
+            Console.WriteLine(" Value: ");
             KVPInterface.ReadResult result = GetReadResult(varName);
-            Console.WriteLine(result.value);
+            string[] splitStrings = { "X ", ", Y ", ", Z ", ", A ", ", B ", ", C ", ", S" };
+            string[] values = result.value.Split(splitStrings, System.StringSplitOptions.RemoveEmptyEntries);
+            double[] posVals = { 0, 0, 0, 0, 0, 0 };
+            //Console.WriteLine(result.value);
+            for(int i = 0; i < 6; i++) 
+            {
+                posVals[i] = Convert.ToDouble(values[i+1]);
+            }
+            foreach (var val in posVals)
+            {
+                Console.WriteLine(val);
+            }
         }
         public void run()
         {
@@ -45,8 +56,8 @@ namespace Reading
             Console.WriteLine("Awaiting User Confirmation (keypress)");
             Console.ReadKey();
             while (true) {
-                readFromKUKA("my_rel");
-                System.Threading.Thread.Sleep(500);
+                readFromKUKA("$POS_ACT");
+                System.Threading.Thread.Sleep(2000);
             }
             //Console.ReadKey();
 

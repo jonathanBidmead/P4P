@@ -24,7 +24,7 @@ namespace KVP_Writing
                 success = KVP.Connect(IP, port, 1000);
                 status = success ? "Success" : "Failure";
                 Console.WriteLine(status);
-                System.Threading.Thread.Sleep(2000);
+                System.Threading.Thread.Sleep(500);
 
             } while (!success);
 
@@ -88,15 +88,29 @@ namespace KVP_Writing
             //    success = writeToKUKA("my_inc", val_string);
 
             //}
-            int[] X = new int[] { 10, 0, -10, 0, 10, 0, -10, 0, 10, 0 };
-            int[] Y = new int[] { 0, 10, 0, -10, 0, 10, 0, -10, 0, 0 };
-            int scale = 8;
-            for (int i = 0; i < 10; i++)
+            //int[] X = new int[] { 10, 0, -10, 0, 10, 0, -10, 0, 10, 0 };
+            //int[] Y = new int[] { 0, 10, 0, -10, 0, 10, 0, -10, 0, 0 };
+            int scale = 15;
+            bool readyForNextInput = false;
+            //for every command in X and Y, if motion command is finished, write new 
+            int i = 0;
+            int maxIter = 50;
+            double angle = 2*Math.PI*i/maxIter;
+            Console.WriteLine(2 * Math.PI * 50 / maxIter);
+            while (i < maxIter)
             {
-                success = writeToKUKA("my_step", "TRUE");
-                val_string = String.Format("{{X {0:0.##}, Y {1:0.##}, Z {2:0.##}, A {3:0.##}, B {4:0.##}, C {5:0.##}}}", scale*X[i], scale*Y[i], 0, 0, 0, 0);
-                success = writeToKUKA("my_inc", val_string);
-                System.Threading.Thread.Sleep(500);
+                readyForNextInput = (GetReadResult("my_step").value == "FALSE") ? true:false;//ready for next input if "my_step" val == "FALSE"
+                if (readyForNextInput)
+                {
+                    angle = 2 * Math.PI * i / maxIter;
+                    success = writeToKUKA("my_step", "TRUE");
+                    val_string = String.Format("{{X {0:0.##}, Y {1:0.##}, Z {2:0.##}, A {3:0.##}, B {4:0.##}, C {5:0.##}}}", scale * Math.Cos(angle), scale * Math.Sin(angle), 0, 0, 0, 0);
+                    success = writeToKUKA("my_inc", val_string);
+                    Console.Write("Current Step:");
+                    Console.WriteLine(i);
+                    i++;
+                }
+                //System.Threading.Thread.Sleep(500);
             }
             Console.ReadKey();
 
