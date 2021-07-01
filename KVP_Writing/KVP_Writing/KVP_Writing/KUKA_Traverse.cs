@@ -83,10 +83,12 @@ namespace KVP_Writing
 
             Console.WriteLine("Moving Now.");
             bool readyForNextInput = (KVP.ReadVariable("my_step").value == "FALSE") ? true : false;//ready for next input if "my_step" val == "FALSE"
+            readyForNextInput = true;//DEBUG
             if (readyForNextInput)
             {
                 bool success = writeToKUKA("my_step", "TRUE");
                 string val_string = String.Format("{{X {0:0.##}, Y {1:0.##}, Z {2:0.##}, A {3:0.##}, B {4:0.##}, C {5:0.##}}}", point_rel[0], point_rel[1], point_rel[2], point_rel[3], point_rel[4], point_rel[5]);
+                Console.WriteLine(val_string);
                 success = writeToKUKA("my_inc", val_string);
             }
         }
