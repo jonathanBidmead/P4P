@@ -1,7 +1,7 @@
 from py_openshowvar import openshowvar
 import opcua
 from opcua import uamethod
-client = openshowvar('10.104.117.1',7000)
+client = openshowvar('10.104.117.2',7000)
 
 # myServer = opcua.Server()
 # url = "localhost"  # Localhost
@@ -51,10 +51,28 @@ def moveDirect(point):
         debug_rite_var = client.write('my_inc',pos_asString,debug=False)
         debug_write_var = client.write('my_step','TRUE',debug=False)
 
-pointA = [50,-700,1300,-130,90,-40]
+def moveDirectKR16(point):
+    initialPos = getCurrentPos()
+    point_rel = [0,0,0,0,0,0]
+    for p in range(6):
+        point_rel[p] = point[p] - initialPos[p]
+    
+    if (client.read('my_step').decode('utf-8') == 'FALSE'):
+        debug_write_var = client.write('MYX',str(point_rel[0]),debug=False)
+        debug_write_var = client.write('MYY',str(point_rel[1]),debug=False)
+        debug_write_var = client.write('MYZ',str(point_rel[2]),debug=False)
+        debug_write_var = client.write('MYA',str(point_rel[3]),debug=False)
+        debug_write_var = client.write('MYB',str(point_rel[4]),debug=False)
+        debug_write_var = client.write('MYC',str(point_rel[5]),debug=False)
+        client.write('my_step','TRUE')
 
-moveDirect(pointA)
+pointA = [900,100,1314,180,0,-180]
 
+# moveDirect(pointA)
+print(getCurrentPos())
+# client.write('my_step','TRUE')
+# client.write('MYX',str(15))
+moveDirectKR16(pointA)
 # testString = '1.2,'
 # print(testString)
 # print(testString.replace(',',''))
