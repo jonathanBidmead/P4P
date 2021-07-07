@@ -1,7 +1,7 @@
 from py_openshowvar import openshowvar
 import opcua
 from opcua import uamethod
-client = openshowvar('10.104.117.2',7000)
+client = openshowvar('10.104.117.1',7000)
 
 # myServer = opcua.Server()
 # url = "localhost"  # Localhost
