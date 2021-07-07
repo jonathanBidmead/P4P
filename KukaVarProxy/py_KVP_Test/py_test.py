@@ -27,6 +27,7 @@ client = openshowvar('10.104.117.1',7000)
 def getCurrentPos():
     pos_string = client.read('$POS_ACT', debug=False)
     pos_string = pos_string.decode("utf-8")
+    print(pos_string)
     pos_string = pos_string.replace(',','')
     pos = pos_string.split()
 
@@ -72,7 +73,7 @@ pointA = [900,100,1314,180,0,-180]
 print(getCurrentPos())
 # client.write('my_step','TRUE')
 # client.write('MYX',str(15))
-moveDirectKR16(pointA)
+# moveDirectKR16(pointA)
 # testString = '1.2,'
 # print(testString)
 # print(testString.replace(',',''))

@@ -37,6 +37,20 @@ global_C = param.add_variable(addSpace,"Global Coordinates",0)
 
 global_X.set_writable()
 
+def getCurrentPos_Internal():
+    pos_string = KVP_client.read('$POS_ACT', debug=False)
+    pos_string = pos_string.decode("utf-8")
+    pos_string = pos_string.replace(',','')
+    pos = pos_string.split()
+
+    print(pos[2])
+    print(pos[4])
+    print(pos[6])
+    print(pos[8])
+    print(pos[10])
+    print(pos[12])
+    return([float(pos[2]),float(pos[4]),float(pos[6]),float(pos[8]),float(pos[10]),float(pos[12])])
+
 @uamethod
 def getCurrentPosition(parent):
     pos_string = KVP_client.read('$POS_ACT', debug=False)
@@ -54,6 +68,28 @@ def getCurrentPosition(parent):
 
 objects.add_method(1, "getPos", getCurrentPosition)
 
+@uamethod
+def moveDirectKR10(parent, point):
+    print("Attempting to move KR10")
+    initialPos = getCurrentPos_Internal()
+    print("initialPos")
+    print(initialPos)
+    
+    
+    point_rel = [0,0,0,0,0,0]
+    for p in range(6):
+        point_rel[p] = point[p] - initialPos[p]
+    print("relative movement")
+    print(point_rel) 
+    pos_asString = "{{X {}, Y {}, Z {}, A {}, B {}, C {}}}".format(point_rel[0], point_rel[1], point_rel[2], point_rel[3], point_rel[4], point_rel[5])
+    print(pos_asString)
+    if (KVP_client.read('my_step').decode('utf-8') == 'FALSE'):
+        debug_rite_var = KVP_client.write('my_inc',pos_asString,debug=False)
+        debug_write_var = KVP_client.write('my_step','TRUE',debug=False)
+    
+
+
+objects.add_method(1, "moveKR10", moveDirectKR10)
 # starting! The server will continue running
 try:
     current_time = str(datetime.now().time())[:-7]
