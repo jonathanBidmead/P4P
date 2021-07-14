@@ -16,16 +16,19 @@ method = objects_node.get_children()
 print(method)
 
 getCurrentPosition = method[2]
-moveKR10 = method[3]
-moveKR16 = method[4]
-moveKR16_rel = method[5]
+startMoveKR10_abs = method[3]
+startMoveKR10_rel = method[4]
+
 x = 0
 y = 0
 z = 0
 pointA = [900,100,1114,180,0,-180]
 pointB = [-85.2,-583.7,1124.3,1,-0.5,178.4]
 pointC = [-85.2+x,-583.7+y,1124.3+z,1,-0.5,178.4]
-pointD = [-50,-100,0,0,0,0]
-objects_node.call_method(moveKR16,pointC)#TODO: OPCUA Expects response from server within 4s. Robot Traversal takes longer than this. Solution: Have sub-function within KVP/OPCUA Server that does the actual moving, define flag for movement complete, etc
-sleep(10)
-objects_node.call_method(moveKR16_rel,pointD)
+pointD = [0,0,120,0,0,0]
+pointE = [-150,-200,0,0,0,0]
+objects_node.call_method(startMoveKR10_abs,pointC)
+sleep(5)
+objects_node.call_method(startMoveKR10_rel,pointD)
+sleep(5)
+objects_node.call_method(startMoveKR10_rel,pointE)
