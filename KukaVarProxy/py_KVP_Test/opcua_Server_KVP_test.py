@@ -10,7 +10,7 @@ from math import sqrt
 # create instance/object of type opcua.Server
 KVP_Server = opcua.Server()
 KVP_client = openshowvar('10.104.117.1',7000)
-url = "localhost"
+url = "172.23.109.107"
 port = 7001
 end_point = "opc.tcp://{}:{}".format(url, port)
 
