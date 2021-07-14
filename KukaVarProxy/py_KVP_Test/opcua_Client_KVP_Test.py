@@ -26,9 +26,9 @@ pointA = [900,100,1114,180,0,-180]
 pointB = [-85.2,-583.7,1124.3,1,-0.5,178.4]
 pointC = [-85.2+x,-583.7+y,1124.3+z,1,-0.5,178.4]
 pointD = [0,0,120,0,0,0]
-pointE = [-150,-200,0,0,0,0]
+pointE = [-200,-200,0,0,0,0]
 objects_node.call_method(startMoveKR10_abs,pointC)
-sleep(5)
+sleep(50)
 objects_node.call_method(startMoveKR10_rel,pointD)
-sleep(5)
+sleep(30)
 objects_node.call_method(startMoveKR10_rel,pointE)
