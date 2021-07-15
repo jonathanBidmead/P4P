@@ -9,8 +9,12 @@ from math import sqrt
 
 # create instance/object of type opcua.Server
 KVP_Server = opcua.Server()
-KVP_client = openshowvar('10.104.117.1',7000)
-url = "172.23.109.107"
+KR10_client = openshowvar('10.104.117.1',7000)
+# KR16_client = openshowvar('10.104.117.2',7000)
+KVP_clients = {}
+KVP_clients[0] = KR10_client
+# KVP_clients[1] = KR16_client
+url = "localhost"
 port = 7001
 end_point = "opc.tcp://{}:{}".format(url, port)
 
@@ -39,15 +43,16 @@ global_C = param.add_variable(addSpace,"Global Coordinates",0)
 global_X.set_writable()
 
 #defining flags for internal server use
-KR10_rel_start_flag = False
-KR10_abs_start_flag = False
-
+rel_start_flag = False
+abs_start_flag = False
+target_robot = ""
 
 #Returns the current position as read from the robot 
 #Note: If "Tool" and "Base" are not set in the HMI/Teachpad, this method will fail and there is no error handling as yet,
-def getCurrentPos_Internal():
+def getCurrentPos_Internal(robotID):
     print("Inevitable Print from KVP Read")#openshowvar's .read() method always prints to the console, and I don't know of a way to disable it.
     #.read() returns a string of format something like "{E6POS: X 100, Y 200 ... }", these lines extract the relevant numbers
+    KVP_client = getRobotKVPClient(robotID)
     pos_string = KVP_client.read('$POS_ACT', debug=False)
     pos_string = pos_string.decode("utf-8")
     pos_string = pos_string.replace(',','')
@@ -69,10 +74,17 @@ def sqrt_of_squares(input):
         sumInternal += i*i
     return sqrt(sumInternal)
 
+def getRobotKVPClient(robotID):
+    if (robotID == "KR10"):
+        return KVP_clients[0]
+    if (robotID == "KR16"):
+        return KVP_clients[1]
+
 #@uamethod means the function is accessible via OPCUA 
 #This method is identical to getCurrentPosition_Internal, except it can be accessed via OPCUA (and cannot be accessed internally, as far as I can tell - hence the seperate functions)
 @uamethod
-def getCurrentPosition(parent):#"parent" argument is required of all OPCUA methods, but I have no idea why or what it does
+def getCurrentPosition(parent, robotID):#"parent" argument is required of all OPCUA methods, but I have no idea why or what it does
+    KVP_client = getRobotKVPClient(robotID)
     pos_string = KVP_client.read('$POS_ACT', debug=False)
     pos_string = pos_string.decode("utf-8")
     pos_string = pos_string.replace(',','')
@@ -89,31 +101,13 @@ def getCurrentPosition(parent):#"parent" argument is required of all OPCUA metho
 #adding the method to the OPCUA addressSpace or methodSpace or whatever the jargon is - you need to do this to be able to access it from a client
 objects.add_method(1, "getPos", getCurrentPosition)
 
-# @uamethod
-# def moveDirectKR10(parent, point):
-#     print("Attempting to move KR10")
-#     initialPos = getCurrentPos_Internal()
-#     print("initialPos")
-#     print(initialPos)
-    
-    
-#     point_rel = [0,0,0,0,0,0]
-#     for p in range(6):
-#         point_rel[p] = point[p] - initialPos[p]
-#     print("relative movement")
-#     print(point_rel) 
-#     pos_asString = "{{X {}, Y {}, Z {}, A {}, B {}, C {}}}".format(point_rel[0], point_rel[1], point_rel[2], point_rel[3], point_rel[4], point_rel[5])
-#     print(pos_asString)
-#     if (KVP_client.read('my_step').decode('utf-8') == 'FALSE'):
-#         debug_rite_var = KVP_client.write('my_inc',pos_asString,debug=False)
-#         debug_write_var = KVP_client.write('my_step','TRUE',debug=False)
-    
 
 # internal method that does the actual moving of the KR10
-def moveDirectKR10(point):
+def moveDirect_absolute(point, robotID):
+    KVP_client = getRobotKVPClient(robotID)
     epsilon = 0.1
     i = 1
-    initialPos = getCurrentPos_Internal()
+    initialPos = getCurrentPos_Internal(robotID)
     point_check = sqrt_of_squares(point)
     newPos_check = point_check + epsilon + 10 #arbitrary value added so the loop can start
     
@@ -122,7 +116,7 @@ def moveDirectKR10(point):
         print("Point Check", point_check)
         print("new pos check", newPos_check)
         #get new initialPos to re-calculate relative position of point
-        initialPos = getCurrentPos_Internal()
+        initialPos = getCurrentPos_Internal(robotID)
 
         
         point_rel = [0,0,0,0,0,0]
@@ -132,7 +126,7 @@ def moveDirectKR10(point):
             point_rel[p] = point[p] - initialPos[p]
         
         #functionally the same as initialPos now, but kept seperate for clarity/because I'm lazy idk
-        newPos = getCurrentPos_Internal()
+        newPos = getCurrentPos_Internal(robotID)
         newPos_check = sqrt_of_squares(newPos)
         print("Updated New Pos Check", newPos_check)
         # newPos_check = 1
@@ -159,8 +153,9 @@ def moveDirectKR10(point):
     KR10_abs_start_flag = False
 
 # @uamethod
-def moveDirectKR10_relative(point):
+def moveDirect_relative(point, robotID):
     point_rel = point
+    KVP_client = getRobotKVPClient(robotID)
     print("Function Called")
     if (KVP_client.read('my_step').decode('utf-8') == 'FALSE'):
         KVP_client.write('MYX',str(point_rel[0]))
@@ -176,18 +171,22 @@ def moveDirectKR10_relative(point):
         global KR10_rel_start_flag 
         KR10_rel_start_flag = False
 @uamethod
-def beginMoveKR10_absolute(parent, point):
-    global KR10_abs_start_flag
-    global KR10_target_point
-    KR10_target_point = point
-    KR10_abs_start_flag = True
+def beginMoveKR10_absolute(parent, point, robotID):
+    global abs_start_flag
+    global target_point
+    global target_robot
+    target_point = point
+    target_robot = robotID
+    abs_start_flag = True
 
 @uamethod
-def beginMoveKR10_relative(parent, point):
-    global KR10_rel_start_flag
-    global KR10_target_point
-    KR10_target_point = point
-    KR10_rel_start_flag = True
+def beginMoveKR10_relative(parent, point, robotID):
+    global rel_start_flag
+    global target_point
+    global target_robot
+    target_point = point
+    target_robot = robotID
+    rel_start_flag = True
 
 objects.add_method(1, "beginKR10_abs", beginMoveKR10_absolute)
 # objects.add_method(1, "moveKR16", moveDirectKR16)
@@ -205,10 +204,10 @@ except:
 
 #Re-doing a whole bunch of stuff to get around timeout issues
 while True:
-    if (KR10_rel_start_flag):
-        print("Beginning Relative Motion")
-        moveDirectKR10_relative(KR10_target_point)
+    if (rel_start_flag):
+        print("Beginning Relative Motion with", target_robot)
+        moveDirect_relative(target_point, target_robot)
 
-    if (KR10_abs_start_flag):
-        print("Beginning Absolute Motion")
-        moveDirectKR10(KR10_target_point)
+    if (abs_start_flag):
+        print("Beginning Absolute Motion with", target_robot)
+        moveDirect_absolute(target_point, target_robot)
