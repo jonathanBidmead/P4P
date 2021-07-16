@@ -5,7 +5,7 @@ from Calli import callibrate
 
 img_counter = 0
 webcam = False
-path = "test0.png"
+path = "parttest.png"
 cap = cv2.VideoCapture(0)
 cap.set(10,160)
 cap.set(2,1920)
