@@ -9,11 +9,14 @@ from math import sqrt
 
 # create instance/object of type opcua.Server
 KVP_Server = opcua.Server()
+
+# create instances of KVP Servers
 KR10_client = openshowvar('10.104.117.1',7000)
 # KR16_client = openshowvar('10.104.117.2',7000)
 KVP_clients = {}
 KVP_clients[0] = KR10_client
 # KVP_clients[1] = KR16_client
+
 url = "localhost"
 port = 7001
 end_point = "opc.tcp://{}:{}".format(url, port)
