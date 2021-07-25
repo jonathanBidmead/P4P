@@ -16,6 +16,7 @@ def circleContour(img,cThr=[100,100],showCanny=False,minArea = 1000,filter = 0,d
 
     contours,hiearchy = cv2.findContours(imgThre,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 
+
     finalContours = []
     for i in contours:
         area = cv2.contourArea(i)
@@ -34,7 +35,7 @@ def circleContour(img,cThr=[100,100],showCanny=False,minArea = 1000,filter = 0,d
         
     finalContours = sorted(finalContours,key = lambda x:x[1],reverse = False)
 
-    con = finalContours[2]
+    # con = finalContours[2]
     # print(con[4])
     # cv2.drawContours(img, con[4], -1, (0,255,0), 3)
     # print(len(contours))
@@ -48,41 +49,49 @@ def circleContour(img,cThr=[100,100],showCanny=False,minArea = 1000,filter = 0,d
             x = int(centres[0])
             y = int(centres[1])
 
-            row,_,col = finalContours[-1][4].shape
-            con_r = finalContours[-1][4].reshape(row,col)
-            filter_arr = []
-            diff = 1000
-            centre_fin = 0
-            radius_fin = 0
-
-
-            for thresh in range(30,100):
-                for i in con_r:
-                    if(abs(x-i[0]) + abs(y-i[1]) > thresh):
-                        filter_arr.append(True)
-                    else:
-                        filter_arr.append(False)
-
-                filtered_con = con_r[filter_arr]
-                row,col = filtered_con.shape 
-                filtered_con = filtered_con.reshape(row,1,col)
-
-
-                centres_fil, radius_fil = cv2.minEnclosingCircle(filtered_con)
-                if(abs(radius_fil - radius) < diff):
-                    diff = abs(radius_fil - radius) 
-                    centre_fin = centres_fil
-                    radius_fin = radius_fil
-                
+            if(len(finalContours) > 2):
+                row,_,col = finalContours[-1][4].shape
+                con_r = finalContours[-1][4].reshape(row,col)
                 filter_arr = []
+                diff = 1000
+                centre_fin = 0
+                radius_fin = 0
 
 
-            x = int(centre_fin[0])
-            y = int(centre_fin[1])
-            cv2.circle(img,(x,y),int(radius_fin),(0,0,255),2)
-            distance = math.sqrt((x**2 + y**2))
-    #         cv2.putText(img, "X: " + str(x) + "  Y:" + str(y), (x - 50, y - -90),
-    # cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+                for thresh in range(30,100):
+                    for i in con_r:
+                        if(abs(x-i[0]) + abs(y-i[1]) > thresh):
+                            filter_arr.append(True)
+                        else:
+                            filter_arr.append(False)
+
+                    filtered_con = con_r[filter_arr]
+                    row,col = filtered_con.shape 
+                    filtered_con = filtered_con.reshape(row,1,col)
+
+
+                    centres_fil, radius_fil = cv2.minEnclosingCircle(filtered_con)
+                    if(abs(radius_fil - radius) < diff):
+                        diff = abs(radius_fil - radius) 
+                        centre_fin = centres_fil
+                        radius_fin = radius_fil
+                    
+                    filter_arr = []
+
+
+                x = int(centre_fin[0])
+                y = int(centre_fin[1])
+                radius = radius_fin
+
+    cv2.circle(img,(x,y),int(radius),(0,0,255),2)
+    distance = math.sqrt((x**2 + y**2))
+    cv2.putText(img, "X: " + str(x) + "  Y:" + str(y), (x+30, y+30),
+    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+
+    print("x" + str(x))
+    print("y" + str(y))
+
+    print("-----------")
     #         cv2.putText(img, "Distance: " + str(distance), (x - 50, y - 60),
     # cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
     #         cv2.putText(img, "Radius: " + str(int(radius)), (x - 50, y - 80),

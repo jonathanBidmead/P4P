@@ -5,8 +5,8 @@ from Calli import callibrate
 
 img_counter = 0
 webcam = False
-path = "parttest.png"
-cap = cv2.VideoCapture(0)
+path = "test2.png"
+cap = cv2.VideoCapture(1)
 cap.set(10,160)
 cap.set(2,1920)
 cap.set(4,1080)
@@ -15,10 +15,6 @@ wP = 400 * scale
 hP = 400 * scale
 
 # ret, mtx, dist, rvecs, tvecs = callibrate.cal()
-
-
-
-
 
 while True:
     if webcam: success,img = cap.read()
@@ -40,6 +36,7 @@ while True:
     
     imgContours, conts = utils.getContours(img,showCanny=False,minArea=20000,filter=4,draw = True)
     cv2.imshow('Detected',imgContours)
+    
 
     if len(conts) != 0:
         biggest = conts[0][2]
@@ -48,7 +45,7 @@ while True:
         cv2.imshow('Wraped Contours',imgContours2)
 
 
-    k = cv2.waitKey(0)
+    k = cv2.waitKey(1)
     if k%256 == 27:
         # ESC pressed
         print("Escape hit, closing...")
