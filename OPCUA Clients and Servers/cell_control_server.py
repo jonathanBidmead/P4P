@@ -32,8 +32,8 @@ param = objects.add_object(addSpace, "parameters")
 IRID_list = ["KR10","KR16_circ","KR16_lin"]
 IR_pin_list = [3,8,6]
 
-output_list = ["KR10_grip", "KR16_grip", "circ_conveyor"]
-output_pin_list = [6,5,1]
+output_list = ["KR10_grip", "KR16_grip", "circ_conveyor_onoff", "circ_conveyor_piston"]
+output_pin_list = [6,5,1,4]
 
 #Methods to define:
 #IR[n] status
