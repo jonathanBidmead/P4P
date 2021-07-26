@@ -17,7 +17,7 @@ KVP_clients = {}
 KVP_clients[0] = KR10_client
 # KVP_clients[1] = KR16_client
 
-url = "localhost"
+url = "172.23.114.90"
 port = 7001
 end_point = "opc.tcp://{}:{}".format(url, port)
 
@@ -49,6 +49,10 @@ global_X.set_writable()
 rel_start_flag = False
 abs_start_flag = False
 target_robot = ""
+
+#buffer for point movement
+buffer = []
+buffer_type = []
 
 #Returns the current position as read from the robot 
 #Note: If "Tool" and "Base" are not set in the HMI/Teachpad, this method will fail and there is no error handling as yet,
@@ -107,7 +111,8 @@ objects.add_method(1, "getPos", getCurrentPosition)
 
 # internal method that does the actual moving of the KR10
 def moveDirect_absolute(point, robotID):
-    KVP_client = getRobotKVPClient(robotID)
+    # KVP_client = getRobotKVPClient(robotID)
+    KVP_client = KR10_client
     epsilon = 0.1
     i = 1
     initialPos = getCurrentPos_Internal(robotID)
@@ -125,9 +130,16 @@ def moveDirect_absolute(point, robotID):
         point_rel = [0,0,0,0,0,0]
 
         #get difference, TODO: implement something to do with angles and +/-360 degrees?
-        for p in range(6):
+        for p in range(3):
             point_rel[p] = point[p] - initialPos[p]
         
+        for p in range(3):
+            diff = point[p+3] - initialPos[p+3]
+            if (abs(diff) > 180):
+                point_rel[p+3] = -(360-diff)
+            else:
+                point_rel[p+3] = diff
+
         #functionally the same as initialPos now, but kept seperate for clarity/because I'm lazy idk
         newPos = getCurrentPos_Internal(robotID)
         newPos_check = sqrt_of_squares(newPos)
@@ -152,8 +164,8 @@ def moveDirect_absolute(point, robotID):
         i+=1
 
     #set flag to false so this method isn't called again unduly
-    global KR10_abs_start_flag 
-    KR10_abs_start_flag = False
+    global abs_start_flag 
+    abs_start_flag = False
 
 # @uamethod
 def moveDirect_relative(point, robotID):
@@ -171,8 +183,8 @@ def moveDirect_relative(point, robotID):
         KVP_client.write('my_step','TRUE')
         print("Point Sent to Robot")
         #Movement Complete so set flag accordingly
-        global KR10_rel_start_flag 
-        KR10_rel_start_flag = False
+        global rel_start_flag 
+        rel_start_flag = False
 @uamethod
 def beginMoveKR10_absolute(parent, point, robotID):
     global abs_start_flag
@@ -180,16 +192,25 @@ def beginMoveKR10_absolute(parent, point, robotID):
     global target_robot
     target_point = point
     target_robot = robotID
+    #store point in buffer, don't move yet
+    global buffer
+    buffer.append(point)
+    buffer_type.append(0)
     abs_start_flag = True
+    return "Absolute Point Sent"
 
 @uamethod
 def beginMoveKR10_relative(parent, point, robotID):
-    global rel_start_flag
+    # global rel_start_flag
     global target_point
     global target_robot
     target_point = point
     target_robot = robotID
-    rel_start_flag = True
+    global buffer
+    buffer.append(point)
+    buffer_type.append(1)
+    # rel_start_flag = True
+    return "Relative Point Sent"
 
 objects.add_method(1, "beginKR10_abs", beginMoveKR10_absolute)
 # objects.add_method(1, "moveKR16", moveDirectKR16)
@@ -214,3 +235,15 @@ while True:
     if (abs_start_flag):
         print("Beginning Absolute Motion with", target_robot)
         moveDirect_absolute(target_point, target_robot)
+
+    else:
+        if (len(buffer) > 0):
+            target_point = buffer[0]
+            if (buffer_type[0] == 0):
+                abs_start_flag = True
+                rel_start_flag = False
+            if (buffer_type[0] == 1):
+                rel_start_flag = True
+                abs_start_flag = False
+            buffer.pop(0)
+            buffer_type.pop(0)

@@ -1,6 +1,6 @@
 from time import sleep
 from opcua import Client
-url = "localhost"
+url = "172.23.114.90"
 port = 7001
 end_point = "opc.tcp://{}:{}".format(url, port)
 opcClient = Client(end_point)
@@ -22,12 +22,13 @@ startMoveKR10_rel = method[4]
 x = 0
 y = 0
 z = 0
-pointA = [900,100,1114,180,0,-180]
-pointB = [-85.2,-583.7,1124.3,1,-0.5,178.4]
-pointC = [-85.2+x,-583.7+y,1124.3+z,1,-0.5,178.4]
-pointD = [0,0,120,0,0,0]
+pointA = [-70,-586,1278,90,0,180]
+pointB = [-70,44,-63,198,-90,198]
+pointC = [-70,-586,1278,-108,90,-108]
+pointD = [0,0,-60,0,0,0]
 pointE = [-200,-200,0,0,0,0]
-# objects_node.call_method(startMoveKR10_abs,pointC,"KR10")
+print(objects_node.call_method(startMoveKR10_abs,pointC,"KR10"))
+# print(objects_node.call_method(startMoveKR10_rel,pointB, "KR10"))
 # sleep(50)
 # objects_node.call_method(startMoveKR10_rel,pointD)
 # sleep(30)
