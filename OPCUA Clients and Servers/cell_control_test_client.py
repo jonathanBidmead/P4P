@@ -1,6 +1,6 @@
 from opcua import Client
 
-url = "localhost"
+url = "192.168.137.255"
 port = 7001
 end_point = "opc.tcp://{}:{}".format(url, port)
 cell_client = Client(end_point)

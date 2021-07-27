@@ -1,6 +1,6 @@
 from time import sleep
 from opcua import Client
-url = "172.23.114.90"
+url = "localhost"
 port = 7001
 end_point = "opc.tcp://{}:{}".format(url, port)
 opcClient = Client(end_point)
@@ -16,8 +16,9 @@ method = objects_node.get_children()
 print(method)
 
 getCurrentPosition = method[2]
-startMoveKR10_abs = method[3]
-startMoveKR10_rel = method[4]
+startMove_abs = method[3]
+startMove_rel = method[4]
+startMove_premade = method[5]
 
 x = 0
 y = 0
@@ -27,12 +28,9 @@ pointB = [-70,44,-63,198,-90,198]
 pointC = [-70,-586,1278,-108,90,-108]
 pointD = [0,0,-60,0,0,0]
 pointE = [-200,-200,0,0,0,0]
-print(objects_node.call_method(startMoveKR10_abs,pointC,"KR10"))
-# print(objects_node.call_method(startMoveKR10_rel,pointB, "KR10"))
-# sleep(50)
-# objects_node.call_method(startMoveKR10_rel,pointD)
-# sleep(30)
-# objects_node.call_method(startMoveKR10_rel,pointE)
+# print(objects_node.call_method(startMove_abs,pointA))
+print(objects_node.call_method(startMove_premade, "CV_HOME"))
+print(objects_node.call_method(startMove_rel,pointE))
 
-# test = objects_node.call_method(getCurrentPosition,"KR10")
-# print(test)
+def goto_part():
+    print(objects_node.call_method(startMove_premade, "CV_HOME"))
