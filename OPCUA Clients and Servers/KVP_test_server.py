@@ -18,8 +18,8 @@ KVP_client = openshowvar('10.104.117.1',7000)
 # KVP_clients[0] = KR10_client
 # KVP_clients[1] = KR16_client
 
-url = "localhost"
-port = 7001
+url = "192.168.137.39"
+port = 7002
 end_point = "opc.tcp://{}:{}".format(url, port)
 
 # Assign endpoint url on the OPC UA server address space
@@ -220,10 +220,22 @@ def beginMove_predefined(parent, point):
     premade_start_flag = True
     return "Predefined Point {} Sent".format(point)
 
+@uamethod
+def is_robot_busy(parent):
+    global buffer
+    global premade_start_flag
+    if len(buffer) > 0:
+        return True
+    if premade_start_flag == True:
+        return True
+    else:
+        return False
+
 
 objects.add_method(1, "beginMove_abs", beginMove_absolute)
 objects.add_method(1, "beginMove_rel", beginMove_relative)
 objects.add_method(1, "beginMove_premade", beginMove_predefined)
+objects.add_method(1, "is_robot_busy", is_robot_busy)
 # starting! The server will continue running
 try:
     current_time = str(datetime.now().time())[:-7]
@@ -238,14 +250,16 @@ except:
 while True:
     if (rel_start_flag):
         print("Beginning Relative Motion")
-        buffer.pop(0)
-        buffer_type.pop(0)
+        if len(buffer) > 0:#TODO: may be indicative of wider problem 
+            buffer.pop(0)
+            buffer_type.pop(0)
         moveDirect_relative(target_point)
         
     if (abs_start_flag):
         print("Beginning Absolute Motion")
-        buffer.pop(0)
-        buffer_type.pop(0)
+        if len(buffer) > 0:
+            buffer.pop(0)
+            buffer_type.pop(0)
         moveDirect_absolute(target_point)
 
     if (premade_start_flag):
@@ -253,7 +267,7 @@ while True:
         moveDirect_premade(target_premade_point)
     
     else:
-        if (len(buffer) > 0):
+        if (len(buffer) > 0):#TODO: my_step sometimes active when it shouldn't be
             target_point = buffer[0]
             if (buffer_type[0] == 0):
                 abs_start_flag = True
