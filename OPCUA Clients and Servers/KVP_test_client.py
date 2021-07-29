@@ -1,7 +1,7 @@
 from time import sleep
 from opcua import Client
 url = "192.168.137.39"
-port = 7002
+port = 7003
 end_point = "opc.tcp://{}:{}".format(url, port)
 opcClient = Client(end_point)
 opcClient.connect()
@@ -31,12 +31,12 @@ z = 0
 pointA = [-70,-586,1278,90,0,180]
 pointB = [-70,44,-63,198,-90,198]
 pointC = [-70,-586,1278,-108,90,-108]
-pointD = [0,0,-60,0,0,0]
+pointD = [0,0,60,0,0,0]
 pointE = [-200,-200,0,0,0,0]
 # print(objects_node.call_method(startMove_abs,pointA))
 print(objects_node.call_method(startMove_premade, "CV_HOME"))
 # print(objects_node.call_method(startMove_rel,pointE))
-
+# print(objects_node.call_method(startMove_rel,pointD))
 
 
 # def goto_part():

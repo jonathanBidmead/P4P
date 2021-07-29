@@ -5,7 +5,7 @@ port = 7004
 end_point = "opc.tcp://{}:{}".format(url, port)
 cell_client = Client(end_point)
 cell_client.connect()
-
+print("connected")
 # Get the root node of the adress space
 objects_node = cell_client.get_objects_node()
 

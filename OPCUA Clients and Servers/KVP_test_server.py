@@ -19,7 +19,7 @@ KVP_client = openshowvar('10.104.117.1',7000)
 # KVP_clients[1] = KR16_client
 
 url = "192.168.137.39"
-port = 7002
+port = 7003
 end_point = "opc.tcp://{}:{}".format(url, port)
 
 # Assign endpoint url on the OPC UA server address space
@@ -50,7 +50,7 @@ global_X.set_writable()
 rel_start_flag = False
 abs_start_flag = False
 premade_start_flag = False
-# system_is_busy = False
+buffer_advance_flag = True
 
 #buffer for point movement
 buffer = []
@@ -187,6 +187,11 @@ def moveDirect_premade(point):
     global premade_start_flag
     KVP_client.write(point,'TRUE')
     premade_start_flag = False
+    while KVP_client.read("CV_HOME").decode('utf-8') == 'TRUE':
+        pass
+    global buffer_advance_flag
+    buffer_advance_flag = True
+    return "Premade Point Sent"
 
 
 @uamethod
@@ -198,7 +203,7 @@ def beginMove_absolute(parent, point):
     global buffer
     buffer.append(point)
     buffer_type.append(0)
-    abs_start_flag = True
+    # abs_start_flag = True
     return "Absolute Point Sent"
 
 @uamethod
@@ -215,18 +220,18 @@ def beginMove_relative(parent, point):
 @uamethod
 def beginMove_predefined(parent, point):
     global target_premade_point
-    global premade_start_flag
     target_premade_point = point
-    premade_start_flag = True
+    buffer.append([0,0,0,0,0,0])
+    buffer_type.append(2)
     return "Predefined Point {} Sent".format(point)
 
 @uamethod
 def is_robot_busy(parent):
     global buffer
     global premade_start_flag
-    if len(buffer) > 0:
-        return True
-    if premade_start_flag == True:
+    my_step_flag = KVP_client.read('my_step').decode('utf-8') == "TRUE"
+    cv_home_flag = KVP_client.read('CV_HOME').decode('utf-8') == "TRUE"
+    if my_step_flag | cv_home_flag:
         return True
     else:
         return False
@@ -264,15 +269,28 @@ while True:
 
     if (premade_start_flag):
         print('Beginning Premade Motion')
+        if len(buffer) > 0:
+            buffer.pop(0)
+            buffer_type.pop(0)
         moveDirect_premade(target_premade_point)
     
     else:
+        # print(buffer)
         if (len(buffer) > 0):#TODO: my_step sometimes active when it shouldn't be
             target_point = buffer[0]
+            buffer_advance_flag = False
             if (buffer_type[0] == 0):
                 abs_start_flag = True
                 rel_start_flag = False
+                premade_start_flag = False
             if (buffer_type[0] == 1):
                 rel_start_flag = True
                 abs_start_flag = False
+                premade_start_flag = False
+            if (buffer_type[0] == 2):
+                rel_start_flag = False
+                abs_start_flag = False
+                premade_start_flag = True
+    sleep(0.1)
+
             
