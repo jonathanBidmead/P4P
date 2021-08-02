@@ -3,7 +3,7 @@ from opcua import uamethod
 from random import randint
 from time import sleep
 from datetime import datetime
-import sys
+import sys, os
 from py_openshowvar import openshowvar
 from math import sqrt
 
@@ -18,7 +18,7 @@ KVP_client = openshowvar('10.104.117.1',7000)
 # KVP_clients[0] = KR10_client
 # KVP_clients[1] = KR16_client
 
-url = "192.168.137.39"
+url = "localhost"
 port = 7003
 end_point = "opc.tcp://{}:{}".format(url, port)
 
@@ -57,8 +57,8 @@ buffer = []
 buffer_type = []
 
 #list of premade points/paths defined within KRL code
-premade_points_list = ["CV_HOME", "DEPOSIT_IN_LATHE", "REMOVE_FROM_LATHE", "GLOBAL_HOME"]
-target_premade_point = ""
+premade_points_list = ["", "", "CV_HOME", "DEPOSIT_IN_LATHE", "REMOVE_FROM_LATHE", "GLOBAL_HOME", "PLATFORM"]
+# target_premade_point = ""
 
 #Returns the current position as read from the robot 
 #Note: If "Tool" and "Base" are not set in the HMI/Teachpad, this method will fail and there is no error handling as yet,
@@ -66,7 +66,7 @@ def getCurrentPos_Internal():
     print("Inevitable Print from KVP Read")#openshowvar's .read() method always prints to the console, and I don't know of a way to disable it.
     #.read() returns a string of format something like "{E6POS: X 100, Y 200 ... }", these lines extract the relevant numbers
     
-    pos_string = KVP_client.read('$POS_ACT', debug=False)
+    pos_string = KVP_client.read('$POS_ACT')
     pos_string = pos_string.decode("utf-8")
     pos_string = pos_string.replace(',','')
     pos = pos_string.split()
@@ -92,7 +92,7 @@ def sqrt_of_squares(input):
 @uamethod
 def getCurrentPosition(parent):#"parent" argument is required of all OPCUA methods, but I have no idea why or what it does
     
-    pos_string = KVP_client.read('$POS_ACT', debug=False)
+    pos_string = KVP_client.read('$POS_ACT')
     pos_string = pos_string.decode("utf-8")
     pos_string = pos_string.replace(',','')
     pos = pos_string.split()
@@ -180,6 +180,8 @@ def moveDirect_relative(point):
         KVP_client.write('my_step','TRUE')
         print("Point Sent to Robot")
         #Movement Complete so set flag accordingly
+        while (KVP_client.read('my_step').decode('utf-8') == 'TRUE'):
+            pass
         global rel_start_flag 
         rel_start_flag = False
 
@@ -187,18 +189,18 @@ def moveDirect_premade(point):
     global premade_start_flag
     KVP_client.write(point,'TRUE')
     premade_start_flag = False
-    while KVP_client.read("CV_HOME").decode('utf-8') == 'TRUE':
+    while KVP_client.read(point).decode('utf-8') == 'TRUE':
         pass
     global buffer_advance_flag
     buffer_advance_flag = True
     return "Premade Point Sent"
 
-
+#DO NOT USE THIS TODO: Fix (check wait condition works properly because it does it differently to other functions)
 @uamethod
 def beginMove_absolute(parent, point):
     global abs_start_flag
-    global target_point
-    target_point = point
+    # global target_point
+    # target_point = point
     #store point in buffer, don't move yet
     global buffer
     buffer.append(point)
@@ -209,8 +211,8 @@ def beginMove_absolute(parent, point):
 @uamethod
 def beginMove_relative(parent, point):
     # global rel_start_flag
-    global target_point
-    target_point = point
+    # global target_point
+    # target_point = point
     global buffer
     buffer.append(point)
     buffer_type.append(1)
@@ -219,14 +221,14 @@ def beginMove_relative(parent, point):
 
 @uamethod
 def beginMove_predefined(parent, point):
-    global target_premade_point
-    target_premade_point = point
-    buffer.append([0,0,0,0,0,0])
+    # global target_premade_point
+    # target_premade_point = point
+    buffer.append(point)
     buffer_type.append(2)
     return "Predefined Point {} Sent".format(point)
 
 @uamethod
-def is_robot_busy(parent):
+def is_robot_busy(parent):#TODO: Look into $INPOSITION for a more robust test of whether the robot is moving currently (won't deal with the buffer though)
     global buffer
     global premade_start_flag
     my_step_flag = KVP_client.read('my_step').decode('utf-8') == "TRUE"
@@ -253,6 +255,11 @@ except:
 
 #Continuously checking for new points being sent to the system
 while True:
+
+    sys.stdout = sys.__stdout__ #only allowing buffer to print, nothing else
+    print(buffer)
+    sys.stdout = open(os.devnull, 'w')
+
     if (rel_start_flag):
         print("Beginning Relative Motion")
         if len(buffer) > 0:#TODO: may be indicative of wider problem 
@@ -268,11 +275,11 @@ while True:
         moveDirect_absolute(target_point)
 
     if (premade_start_flag):
-        print('Beginning Premade Motion')
+        print('Beginning Premade Motion to {}'.format(target_point))
         if len(buffer) > 0:
             buffer.pop(0)
             buffer_type.pop(0)
-        moveDirect_premade(target_premade_point)
+        moveDirect_premade(target_point)
     
     else:
         # print(buffer)
@@ -291,6 +298,6 @@ while True:
                 rel_start_flag = False
                 abs_start_flag = False
                 premade_start_flag = True
-    sleep(0.1)
+    sleep(0.5)
 
             

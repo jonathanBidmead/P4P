@@ -1,6 +1,6 @@
 from time import sleep
 from opcua import Client
-url = "192.168.137.39"
+url = "localhost"
 port = 7003
 end_point = "opc.tcp://{}:{}".format(url, port)
 opcClient = Client(end_point)
@@ -35,6 +35,12 @@ pointD = [0,0,60,0,0,0]
 pointE = [-200,-200,0,0,0,0]
 # print(objects_node.call_method(startMove_abs,pointA))
 print(objects_node.call_method(startMove_premade, "CV_HOME"))
+print(objects_node.call_method(startMove_rel, pointE))
+print(objects_node.call_method(startMove_rel, pointD))
+print(objects_node.call_method(startMove_premade, "DEPOSIT_IN_LATHE"))
+print(objects_node.call_method(startMove_premade, "PLATFORM"))
+print(objects_node.call_method(startMove_rel, pointD))
+print(objects_node.call_method(startMove_premade, "GLOBAL_HOME"))
 # print(objects_node.call_method(startMove_rel,pointE))
 # print(objects_node.call_method(startMove_rel,pointD))
 
