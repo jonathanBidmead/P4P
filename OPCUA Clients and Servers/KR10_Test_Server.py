@@ -37,15 +37,6 @@ objects = KVP_Server.get_objects_node()
 # Create objects on the object node
 param = objects.add_object(addSpace, "parameters")
 
-global_X = param.add_variable(addSpace,"Global Coordinates",0)
-global_Y = param.add_variable(addSpace,"Global Coordinates",0)
-global_Z = param.add_variable(addSpace,"Global Coordinates",0)
-global_A = param.add_variable(addSpace,"Global Coordinates",0)
-global_B = param.add_variable(addSpace,"Global Coordinates",0)
-global_C = param.add_variable(addSpace,"Global Coordinates",0)
-
-global_X.set_writable()
-
 #defining flags for internal server use
 rel_start_flag = False
 abs_start_flag = False
@@ -58,7 +49,10 @@ buffer_type = []
 
 #list of premade points/paths defined within KRL code
 premade_points_list = ["", "", "CV_HOME", "DEPOSIT_IN_LATHE", "REMOVE_FROM_LATHE", "GLOBAL_HOME", "PLATFORM"]
-# target_premade_point = ""
+
+#list storing previous positions (from premade_points_list)
+previous_positions = []
+previous_positions_type = []
 
 #Returns the current position as read from the robot 
 #Note: If "Tool" and "Base" are not set in the HMI/Teachpad, this method will fail and there is no error handling as yet,
@@ -187,12 +181,14 @@ def moveDirect_relative(point):
 
 def moveDirect_premade(point):
     global premade_start_flag
+    global last_station
     KVP_client.write(point,'TRUE')
     premade_start_flag = False
     while KVP_client.read(point).decode('utf-8') == 'TRUE':
         pass
     global buffer_advance_flag
     buffer_advance_flag = True
+    last_station = point
     return "Premade Point Sent"
 
 #DO NOT USE THIS TODO: Fix (check wait condition works properly because it does it differently to other functions)
@@ -238,11 +234,34 @@ def is_robot_busy(parent):#TODO: Look into $INPOSITION for a more robust test of
     else:
         return False
 
+@uamethod#TODO: CURRENTLY UNDER CONSTRUCTION, using bad methods and dumb logic. The overall idea is to return like "Current Position: PLATFROM + "Relative Motion" + "[0 0 100 0 0 0]" " or similar
+def get_robot_zone(parent):
+    global previous_positions
+    global previous_positions_type
+    return_string = ""
+    if (previous_positions == []):
+        return_string += "DEFAULT_HOME"
+    else:
+        length = len(previous_positions)
+        
+        for i in range(length):#TODO: make this less shit, there's gotta be some inbuilt index function 
+            if (type(previous_positions_type[length-i-1])==2):#find most recent premade/station position
+                return_string += (previous_positions[length-i-1])
+                first_index = i
+                break
+        for i in range(length-first_index-1):
+            return_string += ""
+            previous_positions[first_index+i+1]
+
+    
+
+
 
 objects.add_method(1, "beginMove_abs", beginMove_absolute)
 objects.add_method(1, "beginMove_rel", beginMove_relative)
 objects.add_method(1, "beginMove_premade", beginMove_predefined)
 objects.add_method(1, "is_robot_busy", is_robot_busy)
+objects.add_method(1, "get_robot_zone", get_robot_zone)
 # starting! The server will continue running
 try:
     current_time = str(datetime.now().time())[:-7]
@@ -262,13 +281,17 @@ while True:
 
     if (rel_start_flag):
         print("Beginning Relative Motion")
-        if len(buffer) > 0:#TODO: may be indicative of wider problem 
+        previous_positions.append(buffer[0])
+        previous_positions_type.append(buffer_type[0])
+        if len(buffer) > 0:
             buffer.pop(0)
             buffer_type.pop(0)
         moveDirect_relative(target_point)
         
     if (abs_start_flag):
         print("Beginning Absolute Motion")
+        previous_positions.append(buffer[0])
+        previous_positions_type.append(buffer_type[0])
         if len(buffer) > 0:
             buffer.pop(0)
             buffer_type.pop(0)
@@ -276,6 +299,8 @@ while True:
 
     if (premade_start_flag):
         print('Beginning Premade Motion to {}'.format(target_point))
+        previous_positions.append(buffer[0])
+        previous_positions_type.append(buffer_type[0])
         if len(buffer) > 0:
             buffer.pop(0)
             buffer_type.pop(0)
