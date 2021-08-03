@@ -1,7 +1,7 @@
 from time import sleep
 from opcua import Client
 url = "localhost"
-port = 7003
+port = 7002
 end_point = "opc.tcp://{}:{}".format(url, port)
 opcClient = Client(end_point)
 opcClient.connect()
@@ -33,17 +33,17 @@ pointB = [-70,44,-63,198,-90,198]
 pointC = [-70,-586,1278,-108,90,-108]
 pointD = [0,0,60,0,0,0]
 pointE = [-200,-200,0,0,0,0]
-# print(objects_node.call_method(startMove_abs,pointA))
-print(objects_node.call_method(startMove_premade, "CV_HOME"))
+
+# print(objects_node.call_method(startMove_premade, "CV_HOME"))
+# print(objects_node.call_method(startMove_rel, pointE))
+# print(objects_node.call_method(startMove_rel, pointD))
+# print(objects_node.call_method(startMove_premade, "DEPOSIT_IN_LATHE"))
+# print(objects_node.call_method(startMove_premade, "PLATFORM"))
+# print(objects_node.call_method(startMove_rel, pointD))
+
+print(objects_node.call_method(startMove_premade, "CIRCULAR_CONVEYOR"))
+print(objects_node.call_method(startMove_premade, "LINEAR_CONVEYOR"))
 print(objects_node.call_method(startMove_rel, pointE))
-print(objects_node.call_method(startMove_rel, pointD))
-print(objects_node.call_method(startMove_premade, "DEPOSIT_IN_LATHE"))
 print(objects_node.call_method(startMove_premade, "PLATFORM"))
 print(objects_node.call_method(startMove_rel, pointD))
 print(objects_node.call_method(startMove_premade, "GLOBAL_HOME"))
-# print(objects_node.call_method(startMove_rel,pointE))
-# print(objects_node.call_method(startMove_rel,pointD))
-
-
-# def goto_part():
-#     print(objects_node.call_method(startMove_premade, "CV_HOME"))
