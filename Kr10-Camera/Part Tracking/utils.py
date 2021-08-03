@@ -97,7 +97,7 @@ def circleContour(img,cThr=[100,100],showCanny=False,minArea = 1000,filter = 0,d
     #         cv2.putText(img, "Radius: " + str(int(radius)), (x - 50, y - 80),
     # cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
     
-    return img,finalContours
+    return img,finalContours,x,y
 
 
 def getContours(img,cThr=[100,100],showCanny=False,minArea = 10000,filter = 0,draw = False):
