@@ -1,10 +1,10 @@
-import opcua
-from opcua import uamethod
-import paho.mqtt.client as mqtt
+# import opcua
+# from opcua import uamethod
+# import paho.mqtt.client as mqtt
 #TODO: get Sahil's server class in here
 
 start_node = 'Linear Conveyor'
-end_node = 'Platform'
+end_node = 'KR10'
 
 #TODO: Convert to enums maybe to bypass the tyranny of spelling
 layout_graph = {
@@ -18,17 +18,24 @@ layout_graph = {
 }
 
 availability_graph = {
-'Linear Conveyor':'ON',
-'KR16':'ON',
-'Circular Conveyor':'ON',
-'Platform':'ON',
-'KR10':'ON',
-'Lathe':'ON',
-'Exit Platform':'ON'
+'Linear Conveyor':set(['ON']),
+'KR16':set(['ON']),
+'Circular Conveyor':set(['ON']),
+'Platform':set(['ON']),
+'KR10':set(['ON']),
+'Lathe':set(['ON']),
+'Exit Platform':set(['ON'])
 }
 
 
-def bfs(graph, start, end):
+def bfs(graph, availability_graph, start, end):
+    initial_graph = graph
+    for i in initial_graph:#WIP: Removing OFF nodes from this copy of the grapht yui+
+        if (availability_graph[i] != set(['ON'])):
+            # graph.pop(i)
+            print('popped')
+    print(graph)
+
     # maintain a queue of paths
     queue = []
     # push the first path into the queue
@@ -47,9 +54,30 @@ def bfs(graph, start, end):
             new_path.append(adjacent)
             queue.append(new_path)
 
-@uamethod
-def get_path(parent, start_node, end_node):
-    return bfs(layout_graph,start_node,end_node)
+def add_node(node,adjacent_nodes):
+    layout_graph.update({node:adjacent_nodes})
+    availability_graph.update({node:'ON'})
+
+def make_node_offline(node):
+    availability_graph.update({node:'OFF'})
+
+
+add_node('Test Node',set(['KR10','KR16']))
+make_node_offline('KR10')
+print(availability_graph)
+# print(availability_graph)
+# print()
+# make_node_offline('KR10')
+# print()
+# print(availability_graph)
+
+print(bfs(layout_graph,availability_graph,start_node,end_node))
+
+
+
+# @uamethod
+# def get_path(parent, start_node, end_node):
+#     return bfs(layout_graph,start_node,end_node)
 
             
 

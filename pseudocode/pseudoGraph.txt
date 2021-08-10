@@ -1,3 +1,0 @@
- adjacency list = {"KR10" "Lathe" "KR16"}
-
- 
