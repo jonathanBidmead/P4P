@@ -1,10 +1,11 @@
+from time import sleep
 # import opcua
 # from opcua import uamethod
 # import paho.mqtt.client as mqtt
 #TODO: get Sahil's server class in here
 
 start_node = 'Linear Conveyor'
-end_node = 'KR10'
+end_node = 'Lathe'
 
 #TODO: Convert to enums maybe to bypass the tyranny of spelling
 layout_graph = {
@@ -28,19 +29,32 @@ availability_graph = {
 }
 
 
-def bfs(graph, availability_graph, start, end):
-    initial_graph = graph
-    for i in initial_graph:#WIP: Removing OFF nodes from this copy of the grapht yui+
+def bfs(graph: dict, availability_graph, start, end):
+    initial_graph = dict(graph)
+    falseFlags = []
+    for i in initial_graph:#WIP: Removing OFF nodes from this copy of the graph
         if (availability_graph[i] != set(['ON'])):
-            # graph.pop(i)
-            print('popped')
-    print(graph)
+            graph.pop(i)
+            falseFlags.append(i)
+    
+    for key in graph:
+        for i in falseFlags:
+            try:
+                graph[key].remove(i)
+            except:
+                pass
 
+    print(graph)
     # maintain a queue of paths
     queue = []
     # push the first path into the queue
     queue.append([start])
+    iters = 0
     while queue:
+        if (len(queue) > 2*len(graph)):
+            return []
+            # break
+        iters = iters+1
         # get the first path from the queue
         path = queue.pop(0)
         # get the last node from the path
@@ -54,23 +68,34 @@ def bfs(graph, availability_graph, start, end):
             new_path.append(adjacent)
             queue.append(new_path)
 
+
+
+
 def add_node(node,adjacent_nodes):
     layout_graph.update({node:adjacent_nodes})
-    availability_graph.update({node:'ON'})
+    availability_graph.update({node:set(['ON'])})
+    for key in layout_graph:
+        for adj in adjacent_nodes:
+            if (key == adj):
+                temp = set(layout_graph[key])
+                temp.add(node)
+                # print(temp)
+                layout_graph.update({key:temp})
+
 
 def make_node_offline(node):
-    availability_graph.update({node:'OFF'})
+    availability_graph.update({node:set(['OFF'])})
 
 
-add_node('Test Node',set(['KR10','KR16']))
-make_node_offline('KR10')
-print(availability_graph)
-# print(availability_graph)
-# print()
-# make_node_offline('KR10')
-# print()
-# print(availability_graph)
+# add_node('Test Node',set(['Lathe','KR16']))
+make_node_offline('Circular Conveyor')
+# print(layout_graph)
 
+    # for entry in layout_graph[key]:
+    #     temp = layout_graph[key]
+    #     if entry == 'KR10':
+    #         layout_graph.update({key:})
+        # pass
 print(bfs(layout_graph,availability_graph,start_node,end_node))
 
 
