@@ -35,7 +35,7 @@ while True:
     # cv2.imshow('Undistored',img)
     
     imgContours, conts = utils.getContours(img,showCanny=False,minArea=20000,filter=4,draw = True)
-    cv2.imshow('Detected',imgContours)
+    # cv2.imshow('Detected',imgContours)
     
 
     if len(conts) != 0:
@@ -52,7 +52,7 @@ while True:
         break
     elif k%256 == 32:
         # SPACE pressed
-        img_name = "test{}.png".format(img_counter)
+        img_name = "bb{}.png".format(img_counter)
         cv2.imwrite(img_name, img)
         print("{} written!".format(img_name))
         img_counter += 1
