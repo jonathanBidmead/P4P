@@ -1,13 +1,21 @@
 from time import sleep
+from datetime import datetime
 import sys
 sys.path.append("/C:/Users/drago/OneDrive/Documents/GitHub/P4P/MultiAgent")
 from MultiAgent import smartServer
-
+import opcua
+from opcua import uamethod
 # import opcua
 # from opcua import uamethod
 # import paho.mqtt.client as mqtt
 #TODO: get Sahil's server class in here
-GraphServer = smartServer.smartOpcua('localhost',7001,'Graph Server','server')
+url = "localhost"
+port = 7005
+end_point = "opc.tcp://{}:{}".format(url, port)
+
+GraphServer = smartServer.smartOpcua(url,port,'Graph Server','server')
+
+
 
 
 
@@ -35,9 +43,10 @@ availability_graph = {
 'Exit Platform':set(['ON'])
 }
 
-
-def bfs(graph: dict, availability_graph, start, end):
-    initial_graph = dict(graph)
+@uamethod
+def bfs(parent, start, end):
+    initial_graph = dict(layout_graph)
+    graph = dict(layout_graph)
     falseFlags = []
     for i in initial_graph:#WIP: Removing OFF nodes from this copy of the graph
         if (availability_graph[i] != set(['ON'])):
@@ -51,7 +60,7 @@ def bfs(graph: dict, availability_graph, start, end):
             except:
                 pass
 
-    print(graph)
+    # print(graph)
     # maintain a queue of paths
     queue = []
     # push the first path into the queue
@@ -65,12 +74,12 @@ def bfs(graph: dict, availability_graph, start, end):
         # get the first path from the queue
         path = queue.pop(0)
         # get the last node from the path
-        node = path[-1]
+        nodeN = path[-1]
         # path found
-        if node == end:
+        if nodeN == end:
             return path
         # enumerate all adjacent nodes, construct a new path and push it into the queue
-        for adjacent in graph.get(node, []):
+        for adjacent in graph.get(nodeN, []):
             new_path = list(path)
             new_path.append(adjacent)
             queue.append(new_path)
@@ -90,9 +99,11 @@ def add_node(node,adjacent_nodes):
                 layout_graph.update({key:temp})
 
 
+print(GraphServer.objects.get_children())
 def make_node_offline(node):
     availability_graph.update({node:set(['OFF'])})
 
+GraphServer.addMethods([bfs,add_node,make_node_offline],['bfs','add_node','make_node_offline'])
 
 # add_node('Test Node',set(['Lathe','KR16']))
 make_node_offline('Circular Conveyor')
@@ -103,7 +114,7 @@ make_node_offline('Circular Conveyor')
     #     if entry == 'KR10':
     #         layout_graph.update({key:})
         # pass
-print(bfs(layout_graph,availability_graph,start_node,end_node))
+
 
 
 
@@ -113,5 +124,13 @@ print(bfs(layout_graph,availability_graph,start_node,end_node))
 
             
 
-
+# starting! The server will continue running
+try:
+    current_time = str(datetime.now().time())[:-7]
+    print("{} - OPC UA server has been successfully initialised...".format(current_time))
+    print("{} - Connect to OPC UA server via \"{}\"...".format(current_time, end_point))
+    GraphServer.myserver.start()
+except:
+    print("!!!ERROR!!! Failure to initialise the OPC UA server...")
+    sys.exit()
 

@@ -19,9 +19,9 @@ class smartOpcua:
             #implementatoin for opcua client
             pass
 
-    def addMethods(self,methods):
-        for method in methods:
-            self.objects.add_method(1,"aaa",method)
+    def addMethods(self,methods,browsenames):
+        for i in range(len(methods)):
+            self.objects.add_method(1,browsenames[i],methods[i])
         return
 
 class smartMqtt:
