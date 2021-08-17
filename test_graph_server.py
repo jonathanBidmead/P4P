@@ -14,10 +14,22 @@ port = 7005
 end_point = "opc.tcp://{}:{}".format(url, port)
 
 GraphServer = smartServer.smartOpcua(url,port,'Graph Server','server')
+# GraphServer = opcua.Server()
+
+# # Assign endpoint url on the OPC UA server address space
+# GraphServer.set_endpoint(end_point)
+
+# # Create a name for OPC UA namespace
+# name = "KVP Control"
+
+# # Register the name on OPC UA namespace
+# addSpace = GraphServer.register_namespace(name)
+
+# # Get reference to the Objects node of the OPC UA server
+# objects = GraphServer.get_objects_node()
 
 
-
-
+max_iters = 256
 
 start_node = 'Linear Conveyor'
 end_node = 'Lathe'
@@ -45,38 +57,54 @@ availability_graph = {
 
 @uamethod
 def bfs(parent, start, end):
+    print(layout_graph)
     initial_graph = dict(layout_graph)
     graph = dict(layout_graph)
-    falseFlags = []
-    for i in initial_graph:#WIP: Removing OFF nodes from this copy of the graph
+    inactiveNodes = []
+    for i in initial_graph:
         if (availability_graph[i] != set(['ON'])):
             graph.pop(i)
-            falseFlags.append(i)
+            inactiveNodes.append(i)
     
     for key in graph:
-        for i in falseFlags:
+        for i in inactiveNodes:
             try:
                 graph[key].remove(i)
             except:
                 pass
 
-    # print(graph)
+    try:
+        graph[start]
+    except:
+        return ['no path exists']
+    
+    try:
+        graph[end]
+    except:
+        return ['no path exists']
+
+    print(graph)
     # maintain a queue of paths
     queue = []
     # push the first path into the queue
     queue.append([start])
     iters = 0
     while queue:
-        if (len(queue) > 2*len(graph)):
-            return []
-            # break
+        
+        
         iters = iters+1
         # get the first path from the queue
         path = queue.pop(0)
+        print(iters)
+        if (iters > max_iters):
+            print('no path exists')
+            return ['no path exists']
+            # break
         # get the last node from the path
         nodeN = path[-1]
         # path found
         if nodeN == end:
+            print('path found')
             return path
         # enumerate all adjacent nodes, construct a new path and push it into the queue
         for adjacent in graph.get(nodeN, []):
@@ -84,12 +112,15 @@ def bfs(parent, start, end):
             new_path.append(adjacent)
             queue.append(new_path)
 
-
-
-
-def add_node(node,adjacent_nodes):
+@uamethod
+def add_node(parent,node,adjacent_nodes):
+    # print('adding node begins')
+    adjacent_nodes = set(adjacent_nodes)
+    # print('adj set created')
     layout_graph.update({node:adjacent_nodes})
+    # print('updated layout graph')
     availability_graph.update({node:set(['ON'])})
+    # print('updated avail graph')
     for key in layout_graph:
         for adj in adjacent_nodes:
             if (key == adj):
@@ -98,15 +129,17 @@ def add_node(node,adjacent_nodes):
                 # print(temp)
                 layout_graph.update({key:temp})
 
-
-print(GraphServer.objects.get_children())
-def make_node_offline(node):
+@uamethod
+def make_node_offline(parent,node):
     availability_graph.update({node:set(['OFF'])})
 
+# objects.add_method(1,'bfs',bfs)
+# objects.add_method(1,'add_node',add_node)
+# objects.add_method(1,'make_node_offline',make_node_offline)
 GraphServer.addMethods([bfs,add_node,make_node_offline],['bfs','add_node','make_node_offline'])
 
 # add_node('Test Node',set(['Lathe','KR16']))
-make_node_offline('Circular Conveyor')
+
 # print(layout_graph)
 
     # for entry in layout_graph[key]:
