@@ -40,8 +40,6 @@ class smartMqtt:
         # connect to HiveMQ Cloud on port 8883
         self.client.connect("0f6e8bd5af354092825491bb09ee56da.s1.eu.hivemq.cloud", 8883)
 
-        # subscribe to the topic "my/test/topic"
-        self.client.subscribe("my/test/topic")
 
         while self.connectFlag != True:
             self.client.loop(0.1)

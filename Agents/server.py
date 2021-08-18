@@ -1,3 +1,4 @@
+from time import sleep
 import paho.mqtt.client as mqtt
 
 # The callback for when the client receives a CONNACK response from the server.
@@ -29,12 +30,8 @@ client.connect("0f6e8bd5af354092825491bb09ee56da.s1.eu.hivemq.cloud", 8883)
 client.subscribe("my/test/topic")
 
 # publish "Hello" to the topic "my/test/topic"
-msg = input("msg: ")
+while True:
+    client.connect("0f6e8bd5af354092825491bb09ee56da.s1.eu.hivemq.cloud", 8883)
+    client.loop(0.1)
+    sleep(5)
 
-while(msg != "exit"):
-    client.publish("my/test/topic", msg)
-    print("#######")
-    msg = input("msg: ")
-
-# Blocking call that processes network traffic, dispatches callbacks and handles reconnecting.
-client.loop_forever()
