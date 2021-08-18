@@ -162,8 +162,9 @@ try:
     current_time = str(datetime.now().time())[:-7]
     print("{} - OPC UA server has been successfully initialised...".format(current_time))
     print("{} - Connect to OPC UA server via \"{}\"...".format(current_time, end_point))
-    GraphServer.myserver.start()
-except:
+    GraphServer.server.start()
+except Exception as e:
     print("!!!ERROR!!! Failure to initialise the OPC UA server...")
+    print(e)
     sys.exit()
 

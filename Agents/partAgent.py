@@ -4,6 +4,12 @@ from MultiAgent import smartServer
 import asyncio
 import time
 
+
+latheClient = smartServer.smartOpcua("localhost",7005,"latheClient","client")
+bfs = latheClient.methods[2]
+
+
+
 #msgs
 msg_bids = []
 msg_publish = []
@@ -59,8 +65,14 @@ while True:
         if(len(msg_bids) > 0):
             chosen = msg_bids[0];
             partAgent.client.publish("/auction","partAgent/" + "chosen")
-        
+            partAgent.client.loop(0.1)
+
+            path = latheClient.objects.call_method(bfs,'Linear Conveyor','Exit Platform')
+
+            print(path)
+
         else:
+            published = False
             continue
         
 

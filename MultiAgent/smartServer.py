@@ -9,14 +9,23 @@ class smartOpcua:
     def __init__(self,url,port,name,type):
         if(type == "server"):
             endpoint = "opc.tcp://{}:{}".format(url,port)
-            self.myserver = opcua.Server()
-            self.myserver.set_endpoint(endpoint)
-            self.addspace = self.myserver.register_namespace(name)
-            self.objects = self.myserver.get_objects_node()
+            self.server = opcua.Server()
+            self.server.set_endpoint(endpoint)
+            self.addspace = self.server.register_namespace(name)
+            self.objects = self.server.get_objects_node()
             self.param = self.objects.add_object(self.addspace,"parameters")
             self.type = type
         else:
-            #implementatoin for opcua client
+            endpoint = "opc.tcp://{}:{}".format(url,port)
+            self.client = opcua.Client(endpoint,timeout=100)
+            self.client.connect()
+            self.objects = self.client.get_objects_node()
+            self.methods = self.objects.get_children()
+
+
+
+
+            
             pass
 
     def addMethods(self,methods,browsenames):
