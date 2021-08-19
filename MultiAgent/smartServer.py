@@ -18,7 +18,10 @@ class smartOpcua:
         else:
             endpoint = "opc.tcp://{}:{}".format(url,port)
             self.client = opcua.Client(endpoint,timeout=100)
-            self.client.connect()
+            try:
+                self.client.connect()
+            except Exception as e:
+                print(e)
             self.objects = self.client.get_objects_node()
             self.methods = self.objects.get_children()
 
