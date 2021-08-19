@@ -1,8 +1,63 @@
 import sys
 sys.path.append(r'C:\Users\sahil\Documents\Part 4\Mecheng 700\Code Base\P4P')
 from MultiAgent import smartServer
+from opcua import uamethod
 import asyncio
 import time
+
+url = "localhost"
+port = 4002
+end_point = "opc.tcp://{}:{}".format(url, port)
+
+latheOpcua = smartServer.smartOpcua(url,port,'Lathe1','server')
+
+busy = False
+
+@uamethod
+def request(parent,function):
+    global busy
+    if(function == "Available"):
+        return not busy
+
+    elif(not busy):
+        if(function == "Open Door"):
+            doorOpen()
+        elif(function == "Close Door"):
+            doorClose()
+        elif(function == "Thread"):
+            threading()
+        elif(function == "Chamfer"):
+            chamfer()
+        busy = True
+        print(function + " completed")
+        return True
+    return False
+
+def doorOpen():
+    print("Doors open")
+    time.sleep(2)
+
+def doorClose():
+    print("Doors closed")
+    time.sleep(2)
+
+def threading():
+    print("Threading started.....")
+    time.sleep(2)
+
+def chamfer():
+    print("Chamfering started")
+    time.sleep(2)
+
+latheOpcua.addMethods([request],['request'])
+
+try:
+    latheOpcua.server.start()
+except Exception as e:
+    print(e)
+    
+
+
 
 #msgs
 msg_auctions = []
