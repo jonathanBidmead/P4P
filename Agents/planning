@@ -1,0 +1,11 @@
+Agents:
+    Machine
+    movement
+    part
+    buffer
+
+    Common class:
+        opcua server and clients (automate this somehow?)
+        mqtt topics to subsribe to
+        
+

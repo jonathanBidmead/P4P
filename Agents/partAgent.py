@@ -5,9 +5,16 @@ import asyncio
 import time
 
 
-latheClient = smartServer.smartOpcua("localhost",7005,"latheClient","client")
-bfs = latheClient.methods[2]
+graphClient = smartServer.smartOpcua("localhost",7005,"graphClient","client")
+##make one common function for each server that maps other fucntions internally
+bfs = graphClient.methods[2]
 
+latheClient = smartServer.smartOpcua("localhost",4002,"lathe","client")
+req = latheClient.methods[2]
+
+clients = {
+    "lathe1":latheClient
+}
 
 
 #msgs
@@ -63,13 +70,23 @@ while True:
 
         #Selection of machine
         if(len(msg_bids) > 0):
-            chosen = msg_bids[0];
-            partAgent.client.publish("/auction","partAgent/" + "chosen")
-            partAgent.client.loop(0.1)
+            chosen = msg_bids[0]
 
-            path = latheClient.objects.call_method(bfs,'Linear Conveyor','Exit Platform')
-
+            path = graphClient.objects.call_method(bfs,'Linear Conveyor','Exit Platform')
             print(path)
+            
+
+            #Need a way to map the client and servers to a list or something
+            respone = clients[chosen].objects.call_method(req,'Available')
+            print(chosen + " response: " + respone)
+            if(respone == True):
+                respone = clients[chosen].objects.call_method(req,"Thread")
+                tasks.pop(0)
+
+            
+            published = False
+            continue
+
 
         else:
             published = False
