@@ -78,13 +78,14 @@ while True:
 
             #Need a way to map the client and servers to a list or something
             respone = clients[chosen].objects.call_method(req,'Available')
-            print(chosen + " response: " + respone)
+            print(chosen + " response: " + str(respone))
             if(respone == True):
                 respone = clients[chosen].objects.call_method(req,"Thread")
                 tasks.pop(0)
 
             
             published = False
+            msg_bids = []
             continue
 
 
