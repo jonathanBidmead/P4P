@@ -30,6 +30,7 @@ def request(parent,function):
             chamfer()
         busy = True
         print(function + " completed")
+        busy = False
         return True
     return False
 

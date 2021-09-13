@@ -47,7 +47,7 @@ partAgent.client.on_message = msg_func
 published = False
 
 #Tasks
-tasks = ["lathe","output"]
+tasks = ["lathe","output basket"]
 
 waitTime = 5
 currTime = 0
@@ -72,16 +72,17 @@ while True:
         if(len(msg_bids) > 0):
             chosen = msg_bids[0]
 
-            path = graphClient.objects.call_method(bfs,'Linear Conveyor','Exit Platform')
+            path = graphClient.objects.call_method(bfs,'Linear Conveyor','Lathe')
             print(path)
             
 
             #Need a way to map the client and servers to a list or something
             respone = clients[chosen].objects.call_method(req,'Available')
-            print(chosen + " response: " + str(respone))
             if(respone == True):
+                print("Requesting lathe1 to thread")
                 respone = clients[chosen].objects.call_method(req,"Thread")
                 tasks.pop(0)
+                print("Threading complete")
 
             
             published = False
