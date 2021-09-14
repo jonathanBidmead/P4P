@@ -43,6 +43,7 @@ class smartMqtt:
         self.client = mqtt.Client(name)
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
+        self.name = name
         # enable TLS
         self.client.tls_set(tls_version=mqtt.ssl.PROTOCOL_TLS)
 
