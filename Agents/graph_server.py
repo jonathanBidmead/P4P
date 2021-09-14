@@ -18,7 +18,14 @@ graphAgent.client.subscribe("/keepAlivePings")
 #creating graph describing the layout of all resources
 layout_graph = dict()
 
+#time since last ping 
 lastTime = datetime.datetime.now()
+
+#currently active agents (according to ping responses)
+activeAgents = []#TODO: Change to dict?
+
+#offline agents (agents who've not responded to a ping but have been instantiated at some point)
+offlineAgents = dict()
 
 #interuppt on receiving a message
 def msg_func(client,userdata,msg):
@@ -28,57 +35,64 @@ def msg_func(client,userdata,msg):
     if(msg.topic == "/activeResources"):
         tempData = msg_decoded.split(",")
         if(msg_decoded[0:3] == "ADD"):
-            # layout_graph[tempData[1]] = tempData[4].split()
             add_node(tempData[1],tempData[4].split())
         if(msg_decoded[0:3] == "DEL"):
             del_node(tempData[1])
-        print(layout_graph)
+        # print(layout_graph)
+        if(msg_decoded[0:3] == "OFF"):
+            make_node_offline(tempData[1])
 
     if(msg.topic == "/pathRequests"):
         tempData = msg_decoded.split(",")
         path = bfs(tempData[1],tempData[2])
-        print(path)
+        print("Path Between Nodes" + str(path))
         graphAgent.client.publish("/pathResponses",tempData[1] + "," + str(path))
     
+    #pinging response (copy paste this to other servers)
     if(msg.topic == "/keepAlivePings"):
         if(msg_decoded == "PING"):
-            agent = graphAgent
-            agent.client.publish("/keepAlivePings",agent.name)
+            agent = graphAgent#replace with current agent
+            # agent.client.publish("/keepAlivePings",agent.name)
+
+    #pinging response (graph server only)
+    if(msg.topic == "/keepAlivePings"):
+        if(msg_decoded != "PING"):
+            if (msg_decoded not in activeAgents and msg_decoded not in offlineAgents.keys()):
+                activeAgents.append(msg_decoded)
+            if (msg_decoded in offlineAgents.keys()):
+                make_node_online(msg_decoded)
+                activeAgents.append(msg_decoded)
+
 
 
 #defining msg_func (shortening variable names)
 graphAgent.client.on_message = msg_func
 
-#DEBUG: publish initial layout to activeResources topic (this will be offloaded to somewhere else eventually)
-graphAgent.client.publish("/activeResources","ADD,LINEAR_CONVEYOR,BUFFER,-10 2,KR16")
-graphAgent.client.publish("/activeResources","ADD,KR16,TRANSPORT,-5 2,LINEAR_CONVEYOR CIRCULAR_CONVEYOR PLATFORM")
-graphAgent.client.publish("/activeResources","ADD,PLATFORM,BUFFER,-5 6,KR16")
-graphAgent.client.publish("/activeResources","ADD,CIRCULAR_CONVEYOR,BUFFER,0 2,KR16,KR10")
-graphAgent.client.publish("/activeResources","ADD,KR10,TRANSPORT,5 2,CIRCULAR_CONVEYOR LATHE EXIT_PLATFORM")
-graphAgent.client.publish("/activeResources","ADD,LATHE,MACHINE,5 6,KR10")
-graphAgent.client.publish("/activeResources","ADD,EXIT_PLATFORM,BUFFER,10 2,KR10")
+
 #EVEN MORE DEBUG
-graphAgent.client.publish("/activeResources","DEL,CIRCULAR_CONVEYOR")
+# graphAgent.client.publish("/activeResources","DEL,CIRCULAR_CONVEYOR")
 # graphAgent.client.publish("/pathRequests","PART_AGENT_0,KR10,LINEAR_CONVEYOR")
+
+
 #maximum search depth for bfs
 max_iters = 256
 
+#number of seconds machines have to respond to a ping before being considered offline
+PINGING_TIMEOUT = 5#not used currently,. current implementation is to give each resource until the next ping happens to respond
+PING_FREQUENCY = 5
 
 #breadth-first search through the graph to find a path
 def bfs(start, end):
     
     graph = dict(layout_graph)
-
     try:
         graph[start]
     except:
         return ['no path exists']
-    
     try:
         graph[end]
     except:
         return ['no path exists']
-
     
     # maintain a queue of paths
     queue = []
@@ -86,8 +100,6 @@ def bfs(start, end):
     queue.append([start])
     iters = 0
     while queue:
-        
-        
         iters = iters+1
         # get the first path from the queue
         path = queue.pop(0)
@@ -108,7 +120,9 @@ def bfs(start, end):
             new_path.append(adjacent)
             queue.append(new_path)
 
-#adding a node - making sure it's adjacent to everything else
+
+
+#adding a node - making sure it's adjacent to everything else it needs to be
 def add_node(node,adjacent_nodes):
     # print('adding node begins')
     adjacent_nodes = set(adjacent_nodes)
@@ -125,6 +139,8 @@ def add_node(node,adjacent_nodes):
                 # print(temp)
                 layout_graph.update({key:temp})
 
+
+#deleting a node permanently
 def del_node(node):
     layout_graph.pop(node)
     inactiveNodes = []
@@ -137,13 +153,49 @@ def del_node(node):
             except:
                 pass
 
+#temporarily marking a node as offline when it stops responding to pings
+def make_node_offline(node):
+    if(node not in offlineAgents):
+        offlineAgents[node] = layout_graph[node]#get node and adjacents and put that in the new dict
+        print("made node offline: " + str(node))
+        del_node(node)
+
+#re-instantiate a node once it starts returning pings again
+def make_node_online(node):
+    layout_graph[node] = offlineAgents[node]
+
+#initial ping
+graphAgent.client.publish("/keepAlivePings","PING")
+
+#temp debug solution
+loops = 0
+
 #looping through everything
 while True:
     #client loop for receiving mqtt messages
     graphAgent.client.loop(0.2)
     
+    #DEBUG
+    # print("active agents" + str(activeAgents))
+
+    #send a ping every so often to figure out what agents are still active
     newTime = datetime.datetime.now()
-    if (newTime - lastTime > datetime.timedelta(seconds=5)):
+    if (newTime - lastTime > datetime.timedelta(seconds=PING_FREQUENCY)):
         graphAgent.client.publish("/keepAlivePings","PING")
         lastTime = datetime.datetime.now()
+        
+        #initial loop fucks it up a bit so skipping (this is an early remnant so may be unnecessary now)
+        if (loops < 1):
+            loops += 1
+            continue
+        
+
+        temp_layout_dict = dict(layout_graph)
+        print("active agents" + str(activeAgents))
+        for key in temp_layout_dict:
+            if key not in activeAgents:
+                graphAgent.client.publish("/activeResources","OFF"+","+key)
+        # print(layout_graph)
+        activeAgents = []
+
 

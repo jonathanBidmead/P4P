@@ -1,8 +1,0 @@
-Received message: Received message: /activeResources -> testReceived message: /activeResources -> ADD,LINEAR_CONVEYOR,BUFFER,-10 2,KR16Received message: /activeResources -> ADD,KR16,TRANSPORT,-5 2,LINEAR_CONVEYOR CIRCULAR_CONVEYOR PLATFORMReceived message: /activeResources -> ADD,PLATFORM,BUFFER,-5 6,KR16Received message: /activeResources -> ADD,CIRCULAR_CONVEYOR,BUFFER,0 2,KR16,KR10Received message: /activeResources -> ADD,KR10,TRANSPORT,5 2,CIRCULAR_CONVEYOR LATHE EXIT_PLATFORMReceived message: /activeResources -> ADD,LATHE,MACHINE,5 6,KR10Received message: /activeResources -> ADD,EXIT_PLATFORM,BUFFER,10 2,KR10Received message: /activeResources -> DEL,CIRCULAR_CONVEYORReceived message: /activeResources -> ADD,LINEAR_CONVEYOR,BUFFER,-10 2,KR16
-Received message: /activeResources -> ADD,KR16,TRANSPORT,-5 2,LINEAR_CONVEYOR CIRCULAR_CONVEYOR PLATFORM
-Received message: /activeResources -> ADD,PLATFORM,BUFFER,-5 6,KR16
-Received message: /activeResources -> ADD,CIRCULAR_CONVEYOR,BUFFER,0 2,KR16,KR10
-Received message: /activeResources -> ADD,KR10,TRANSPORT,5 2,CIRCULAR_CONVEYOR LATHE EXIT_PLATFORM
-Received message: /activeResources -> ADD,LATHE,MACHINE,5 6,KR10
-Received message: /activeResources -> ADD,EXIT_PLATFORM,BUFFER,10 2,KR10
-Received message: /activeResources -> DEL,CIRCULAR_CONVEYOR
