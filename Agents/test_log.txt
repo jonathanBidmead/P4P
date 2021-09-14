@@ -1,3 +1,0 @@
-Received message: /activeResources -> ADD,DUMMY_AGENT,BUFFER,0 0,KR10,LINEAR_CONVEYOR
-Received message: /activeResources -> ADD,LINEAR_CONVEYOR,BUFFER,-10 2,KR16
-Received message: /activeResources -> ADD,KR16,TRANSPORT,-5 2,LINEAR_CONVEYOR CIRCULAR_CONVEYOR PLATFORM

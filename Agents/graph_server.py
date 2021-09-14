@@ -7,6 +7,10 @@ import asyncio
 import time
 import datetime
 
+
+
+
+
 #creating graph agent instance
 graphAgent = smartServer.smartMqtt("graphAgent")
 
@@ -35,12 +39,15 @@ def msg_func(client,userdata,msg):
     if(msg.topic == "/activeResources"):
         tempData = msg_decoded.split(",")
         if(msg_decoded[0:3] == "ADD"):
-            add_node(tempData[1],tempData[4].split())
+            if(tempData[1] not in layout_graph.keys()):#only add a new node if it doesn't already exist
+                add_node(tempData[1],tempData[4].split())
         if(msg_decoded[0:3] == "DEL"):
-            del_node(tempData[1])
+            if(tempData[1] in layout_graph.keys()):#only delete a node if it does already exist
+                del_node(tempData[1])
         # print(layout_graph)
         if(msg_decoded[0:3] == "OFF"):
-            make_node_offline(tempData[1])
+            if(tempData[1] not in offlineAgents.keys()):
+                make_node_offline(tempData[1])
 
     if(msg.topic == "/pathRequests"):
         tempData = msg_decoded.split(",")
@@ -51,7 +58,7 @@ def msg_func(client,userdata,msg):
     #pinging response (copy paste this to other servers)
     if(msg.topic == "/keepAlivePings"):
         if(msg_decoded == "PING"):
-            agent = graphAgent#replace with current agent
+            agent = graphAgent#replace with current agent (and uncomment the below line)
             # agent.client.publish("/keepAlivePings",agent.name)
 
     #pinging response (graph server only)

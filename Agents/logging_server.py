@@ -1,4 +1,5 @@
 import sys
+from typing import NewType
 sys.path.append(r'C:\Users\sahil\Documents\Part 4\Mecheng 700\Code Base\P4P')
 sys.path.append(r'C:\Users\drago\OneDrive\Documents\GitHub\P4P')
 from MultiAgent import smartServer
@@ -34,25 +35,56 @@ def msg_func(client,userdata,msg):
     file.close()
     if(msg.topic == "/activeResources"):
         if (is_initial_graph):
-
             if(msg_decoded[0:3] == "ADD"):
                 tempData = msg_decoded.split(",")
-                file = open("test_initial_layout_graph.txt","a")
-                adjacent_list = tempData[4].split()
-                adj_string = ""
-                for agent in adjacent_list:
-                    adj_string = adj_string + "," + agent
-                file.write(tempData[1]+adj_string+"\n")
+
+                file = open("test_initial_layout_graph.txt","r")
+                allText = file.readlines()
+
+                #variable to check if agent exists already
+                agentExists = False
+
+                for line in allText:#for each line in the file
+                    elements = line.split(",")
+                    if (elements[0] == tempData[1]):#check if the first element in the line is the item to be added
+                        #agent already exists, don't add a duplicate
+                        agentExists = True
+                
                 file.close()
+
+                if(agentExists == False):
+                    file = open("test_initial_layout_graph.txt","a")
+                    adjacent_list = tempData[4].split()
+                    adj_string = ""
+                    for agent in adjacent_list:
+                        adj_string = adj_string + "," + agent
+                    file.write(tempData[1]+adj_string+"\n")
+                    file.close()
             
-            if(msg_decoded[0:3] == "DEL"):
-                pass#TODO: Implement, gonna be a bit of a pain because need to remove adjacencies from all nodes, not just the deleted one
+            if(msg_decoded[0:3] == "DEL" or msg_decoded[0:3] == "OFF"):
+                tempData = msg_decoded.split(",")
+                file = open("test_initial_layout_graph.txt","r")
+                allText = file.readlines()
+                for line in allText:#for each line in the file
+                    elements = line.split(",")
+                    if (elements[0] == tempData[1]):#check if the first element in the line is the item to be deleted
+                        print("delete line: " + line)
+
+                file.close()
+
+        if (~is_initial_graph):
+            file = open("test_ongoing_layout_graph.txt","a")
+            file.write(str(datetime.datetime.now()) + ",")
+            file.write(msg_decoded + '\n')
+            file.close()
+
+
     
 
 #defining msg_func (shortening variable names)
 loggingAgent.client.on_message = msg_func
 
-#initially clear the log file
+#initially clear the log files
 f = open("test_log.txt","w")
 f.write("")
 f.close()
@@ -61,6 +93,15 @@ f = open("test_initial_layout_graph.txt","w")
 f.write("")
 f.close()
 
+f = open("test_ongoing_layout_graph.txt","w")
+f.write("")
+f.close()
+
+initTime = datetime.datetime.now()
+
 while True:
     loggingAgent.client.loop(0.1)
+
+    if(datetime.datetime.now() - initTime > datetime.timedelta(seconds=5)):#TODO: make a better condition for switching from initialisation/setup to ongoing updates
+        is_initial_graph = False
 
