@@ -64,7 +64,7 @@ def msg_func(client,userdata,msg):
     #pinging response (graph server only)
     if(msg.topic == "/keepAlivePings"):
         if(msg_decoded != "PING"):
-            if (msg_decoded not in activeAgents and msg_decoded not in offlineAgents.keys()):
+            if (msg_decoded in layout_graph.keys() and msg_decoded not in activeAgents and msg_decoded not in offlineAgents.keys()):
                 activeAgents.append(msg_decoded)
             if (msg_decoded in offlineAgents.keys()):
                 make_node_online(msg_decoded)

@@ -1,4 +1,5 @@
 import sys
+from time import sleep
 from urllib.request import DataHandler
 sys.path.append(r'C:\Users\sahil\Documents\Part 4\Mecheng 700\Code Base\P4P')
 sys.path.append(r'C:\Users\drago\OneDrive\Documents\GitHub\P4P')
@@ -40,3 +41,6 @@ dummyAgent.client.publish("/activeResources","ADD,KR16,TRANSPORT,-5 2,LINEAR_CON
 
 while True:
     dummyAgent.client.loop(0.1)
+
+    sleep(10)
+    dummyAgent.client.publish("/movement","PART_AGENT_0,NODE1,NODE2")
