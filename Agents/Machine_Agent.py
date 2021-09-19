@@ -9,6 +9,7 @@ import time
 #OPCUA stuff to be implemented later. Refer to Lathe1.py for implementing OPCUA stuff
 
 #Variables and Flags
+machineCapabilites = ["Lathe"]
 machineBooked = False
 partBids = []
 acceptingBids = True
@@ -16,6 +17,8 @@ currentTime = 0
 prevTime = 0
 confirmationRecieved = False
 operationRequest = False
+speed = 100
+chosenPart = ""
 
 machineName = "lathe1"
 
@@ -27,23 +30,29 @@ def msg_func(client,userdata,msg):
     global partBids
     global machineBooked
     global operationRequest
+    global chosenPart
+    global confirmationRecieved
 
     msg_decoded = msg.payload.decode("utf-8")
     print("Received message: " + msg.topic + " -> " + msg_decoded)
     topic = msg.topic
-    msg_split = msg_decoded.split("/")
+    msg_split = msg_decoded.split(",")
 
     if(topic == "/partBids"):
-        if(acceptingBids and msg_split[2] == "lathe"): #decide on location of if the agent mentions lathe
-            partBids.append(msg_split[3]) #Decide on message format
+        if(acceptingBids and (msg_split[2] in machineCapabilites)):
+            #Implement the bit where it ignores same agents
+            partBids.append((msg_split[0]),float(msg_split[1]))
+            
+    if(topic == "/confirmation"):
+        if(not acceptingBids and not machineBooked):
+            if(msg_split[1] == machineName):
+                confirmationRecieved = True
 
     if(topic == "/machining"):
-        if(msg_split[2] == "this specific machine"): #Decide on format of message 
+        if(msg_split[1] == machineName and msg_split[0] == chosenPart):
             if(machineBooked):
                 operationRequest = True
     
-    if(topic = "/")
-    #All movemement agent requests can be added here too. Directly call the OPCUA methods
 
         
 
@@ -62,6 +71,7 @@ while True:
     if(not machineBooked):
         if(acceptingBids):
             #If machine is accepting bids and hasnt been booked
+            print("Accepting Bids")
             prevTime = time.time()
             currentTime = prevTime
             while(currentTime - prevTime < 5):
@@ -69,19 +79,24 @@ while True:
                 latheAgent.client.loop(0.1)
             
             if(len(partBids) != 0):
+                print("Bids recieved!")
                 acceptingBids = False
+            else:
+                print("No bids recieved")
 
         else:
             #If machine has recieved a list of bids
-            partBids.sort(key = lambda x:x[1])
+            print("Processing Bids")
+            partBids.sort(key = lambda x:x[1],reverse=True)
             chosenPart = partBids[0]
-            latheAgent.client.publish("/machineBids","/" + chosenPart + "/Chosen") #Decide msg pattern
+            latheAgent.client.publish("/machineBids",machineName + "," + speed + ",", chosenPart[0]) #Decide msg pattern
             prevTime = time.time()
             currentTime = prevTime
             while(currentTime - prevTime < 5):
                 currentTime = time.time()
                 latheAgent.client.loop(0.1)
             if(confirmationRecieved == True):
+                print("3-way handshake complete")
                 machineBooked = True
             else:
                 acceptingBids = True
@@ -89,7 +104,8 @@ while True:
     
     else:
         if(operationRequest):
-            latheAgent.client.publish("/partAgents" + chosenPart + "/Completed")
+            print("Operation completed")
+            latheAgent.client.publish("/confirmation" + machineName + "," + chosenPart + "," + "done")
             machineBooked = False
             partBids = []
             acceptingBids = True
