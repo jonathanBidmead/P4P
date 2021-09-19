@@ -18,6 +18,7 @@ graphAgent = smartServer.smartMqtt("graphAgent")
 graphAgent.client.subscribe("/activeResources")
 graphAgent.client.subscribe("/pathRequests")
 graphAgent.client.subscribe("/keepAlivePings")
+graphAgent.client.subscribe("/graphLogging")
 
 #creating graph describing the layout of all resources
 layout_graph = dict()
@@ -31,6 +32,9 @@ activeAgents = []#TODO: Change to dict?
 #offline agents (agents who've not responded to a ping but have been instantiated at some point)
 offlineAgents = dict()
 
+#agents that just got added
+newAgents = []
+
 #interuppt on receiving a message
 def msg_func(client,userdata,msg):
     msg_decoded = msg.payload.decode("utf-8")
@@ -39,15 +43,9 @@ def msg_func(client,userdata,msg):
     if(msg.topic == "/activeResources"):
         tempData = msg_decoded.split(",")
         if(msg_decoded[0:3] == "ADD"):
-            if(tempData[1] not in layout_graph.keys()):#only add a new node if it doesn't already exist
-                add_node(tempData[1],tempData[4].split())
-        if(msg_decoded[0:3] == "DEL"):
-            if(tempData[1] in layout_graph.keys()):#only delete a node if it does already exist
-                del_node(tempData[1])
-        # print(layout_graph)
-        if(msg_decoded[0:3] == "OFF"):
-            if(tempData[1] not in offlineAgents.keys()):
-                make_node_offline(tempData[1])
+            if(tempData[1] not in layout_graph.keys() and tempData[1] not in offlineAgents.keys()):#only add a new node if it doesn't already exist
+                add_node(tempData[1],tempData[4].split(),tempData[2],tempData[3])
+                newAgents.append(tempData[1])
 
     if(msg.topic == "/pathRequests"):
         tempData = msg_decoded.split(",")
@@ -64,22 +62,17 @@ def msg_func(client,userdata,msg):
     #pinging response (graph server only)
     if(msg.topic == "/keepAlivePings"):
         if(msg_decoded != "PING"):
+            #if the server has seen this node before and it was previously online
             if (msg_decoded in layout_graph.keys() and msg_decoded not in activeAgents and msg_decoded not in offlineAgents.keys()):
                 activeAgents.append(msg_decoded)
+            #if this node was previously offline
             if (msg_decoded in offlineAgents.keys()):
                 make_node_online(msg_decoded)
                 activeAgents.append(msg_decoded)
 
 
-
 #defining msg_func (shortening variable names)
 graphAgent.client.on_message = msg_func
-
-
-#EVEN MORE DEBUG
-# graphAgent.client.publish("/activeResources","DEL,CIRCULAR_CONVEYOR")
-# graphAgent.client.publish("/pathRequests","PART_AGENT_0,KR10,LINEAR_CONVEYOR")
-
 
 #maximum search depth for bfs
 max_iters = 256
@@ -130,7 +123,7 @@ def bfs(start, end):
 
 
 #adding a node - making sure it's adjacent to everything else it needs to be
-def add_node(node,adjacent_nodes):
+def add_node(node,adjacent_nodes,type,GUI_location):
     # print('adding node begins')
     adjacent_nodes = set(adjacent_nodes)
     # print('adj set created')
@@ -145,10 +138,17 @@ def add_node(node,adjacent_nodes):
                 temp.add(node)
                 # print(temp)
                 layout_graph.update({key:temp})
+    #logging this action
+    adj_str = ""
+    #reformatting the adjacent nodes to a string
+    for nd in adjacent_nodes:
+        adj_str = adj_str + nd + " "
+    adj_str = adj_str.rstrip(" ")
+    graphAgent.client.publish("/graphLogging","ADD," + str(node) + "," + type + "," + GUI_location + "," + adj_str)
 
 
 #deleting a node permanently
-def del_node(node):
+def del_node(node,asOffline):
     layout_graph.pop(node)
     inactiveNodes = []
     inactiveNodes.append(node)
@@ -159,17 +159,25 @@ def del_node(node):
                 layout_graph[key].remove(i)
             except:
                 pass
+    #logging this action
+    if(not asOffline):
+        graphAgent.client.publish("/graphLogging","DEL," + str(node))
 
 #temporarily marking a node as offline when it stops responding to pings
 def make_node_offline(node):
     if(node not in offlineAgents):
         offlineAgents[node] = layout_graph[node]#get node and adjacents and put that in the new dict
         print("made node offline: " + str(node))
-        del_node(node)
+        del_node(node,True)
+    #logging this action
+    graphAgent.client.publish("/graphLogging","OFF," + str(node))
 
 #re-instantiate a node once it starts returning pings again
 def make_node_online(node):
     layout_graph[node] = offlineAgents[node]
+    offlineAgents.pop(node)
+    #logging this action
+    graphAgent.client.publish("/graphLogging","ON," + str(node))
 
 #initial ping
 graphAgent.client.publish("/keepAlivePings","PING")
@@ -200,9 +208,12 @@ while True:
         temp_layout_dict = dict(layout_graph)
         print("active agents" + str(activeAgents))
         for key in temp_layout_dict:
-            if key not in activeAgents:
-                graphAgent.client.publish("/activeResources","OFF"+","+key)
+            if (key not in activeAgents and key not in offlineAgents.keys()):#if an agent in layout_graph hasn't responded to ping & hasn't previously been marked offline, make it be offline
+                # graphAgent.client.publish("/activeResources","OFF"+","+key)
+                if (key not in newAgents):
+                    make_node_offline(key)
         # print(layout_graph)
         activeAgents = []
+        newAgents = []
 
 

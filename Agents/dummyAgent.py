@@ -20,6 +20,7 @@ def msg_func(client,userdata,msg):
     #pinging response (copy paste this to other servers)
     if(msg.topic == "/keepAlivePings"):
         if(msg_decoded == "PING"):
+            print("responding to ping")
             agent = dummyAgent#replace with current agent
             agent.client.publish("/keepAlivePings",agent.name)
             agent.client.publish("/keepAlivePings","KR16")
@@ -28,7 +29,7 @@ def msg_func(client,userdata,msg):
 #defining msg_func (shortening variable names)
 dummyAgent.client.on_message = msg_func
 
-dummyAgent.client.publish("/activeResources","ADD,DUMMY_AGENT,BUFFER,0 0,KR10,LINEAR_CONVEYOR")
+dummyAgent.client.publish("/activeResources","ADD,DUMMY_AGENT,BUFFER,0 0,KR10 LINEAR_CONVEYOR")
 
 #DEBUG: publish initial layout to activeResources topic (this will be offloaded to somewhere else eventually)
 dummyAgent.client.publish("/activeResources","ADD,LINEAR_CONVEYOR,BUFFER,-10 2,KR16")
@@ -42,5 +43,5 @@ dummyAgent.client.publish("/activeResources","ADD,KR16,TRANSPORT,-5 2,LINEAR_CON
 while True:
     dummyAgent.client.loop(0.1)
 
-    sleep(10)
-    dummyAgent.client.publish("/movement","PART_AGENT_0,NODE1,NODE2")
+    # sleep(10)
+    # dummyAgent.client.publish("/movement","PART_AGENT_0,NODE1,NODE2")
