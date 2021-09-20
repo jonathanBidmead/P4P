@@ -63,12 +63,14 @@ def msg_func(client,userdata,msg):
     if(msg.topic == "/keepAlivePings"):
         if(msg_decoded != "PING"):
             #if the server has seen this node before and it was previously online
-            if (msg_decoded in layout_graph.keys() and msg_decoded not in activeAgents and msg_decoded not in offlineAgents.keys()):
-                activeAgents.append(msg_decoded)
+            if (msg_decoded in layout_graph.keys() and msg_decoded not in offlineAgents.keys()):
+                # activeAgents.append(msg_decoded)
+                responsiveAgents.append(msg_decoded)
             #if this node was previously offline
             if (msg_decoded in offlineAgents.keys()):
                 make_node_online(msg_decoded)
-                activeAgents.append(msg_decoded)
+                # activeAgents.append(msg_decoded)
+                responsiveAgents.append(msg_decoded)
 
 
 #defining msg_func (shortening variable names)
@@ -185,14 +187,17 @@ graphAgent.client.publish("/keepAlivePings","PING")
 #temp debug solution
 loops = 0
 
+#fix for agent activity being weird (disconnecting between pings), this allows activeAgents to stay constant over time instead of rebuilding each ping
+responsiveAgents = []
+
 #looping through everything
 while True:
     #client loop for receiving mqtt messages
     graphAgent.client.loop(0.2)
     
     #DEBUG
-    # print("active agents" + str(activeAgents))
-
+    print("active agents     :" + str(activeAgents))
+    # print("responsive agents :" + str(responsiveAgents))
     #send a ping every so often to figure out what agents are still active
     newTime = datetime.datetime.now()
     if (newTime - lastTime > datetime.timedelta(seconds=PING_FREQUENCY)):
@@ -208,12 +213,13 @@ while True:
         temp_layout_dict = dict(layout_graph)
         print("active agents" + str(activeAgents))
         for key in temp_layout_dict:
-            if (key not in activeAgents and key not in offlineAgents.keys()):#if an agent in layout_graph hasn't responded to ping & hasn't previously been marked offline, make it be offline
-                # graphAgent.client.publish("/activeResources","OFF"+","+key)
+            if (key in activeAgents and key not in responsiveAgents):#if an agent in layout_graph hasn't responded to ping & hasn't previously been marked offline, make it be offline
+
                 if (key not in newAgents):
                     make_node_offline(key)
         # print(layout_graph)
-        activeAgents = []
+        activeAgents = responsiveAgents
         newAgents = []
+        responsiveAgents = []
 
 
