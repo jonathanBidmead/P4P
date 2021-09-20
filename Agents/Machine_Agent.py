@@ -44,7 +44,7 @@ def msg_func(client,userdata,msg):
             partBids.append((msg_split[0],float(msg_split[1])))
             
     if(topic == "/confirmation"):
-        if(not acceptingBids and not machineBooked):
+        if((not acceptingBids) and (not machineBooked)):
             if(msg_split[1] == machineName):
                 confirmationRecieved = True
 
@@ -63,6 +63,7 @@ latheAgent.client.subscribe("/partBids")
 latheAgent.client.subscribe("/machineBids")
 latheAgent.client.subscribe("/machining")
 latheAgent.client.subscribe("/partAgents")
+latheAgent.client.subscribe("/confirmation")
 latheAgent.client.on_message = msg_func
 
 while True:
@@ -92,7 +93,7 @@ while True:
             latheAgent.client.publish("/machineBids",machineName + "," + str(speed) + "," + chosenPart[0]) #Decide msg pattern
             prevTime = time.time()
             currentTime = prevTime
-            while(currentTime - prevTime < 5):
+            while(currentTime - prevTime < 15): #Needs to be longer than the part agent wait time
                 currentTime = time.time()
                 latheAgent.client.loop(0.1)
             if(confirmationRecieved == True):

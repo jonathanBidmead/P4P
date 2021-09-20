@@ -15,14 +15,14 @@ class States(enum.Enum):
 
 
 #Variables and Flags
-agentName = "Agent 1"
+agentName = sys.argv[1]
 taskList = ["Lathe","task2"]
 currentTask = ""
 taskDone = False
 machineList = []
 currentTime = 0
 prevTime = 0
-score = 200
+score = float(sys.argv[2])
 state = ""
 targetPath = []
 currentNode = "Linear Conveyer"
@@ -45,13 +45,6 @@ def msg_func(client,userdata,msg):
             if(msg_split[2] == agentName):
                 machineList.append((msg_split[0],float(msg_split[1])))
 
-
-
-
-
-
-
-        
 
             
 #MQTT setup
@@ -90,9 +83,13 @@ while (len(taskList) != 0):
             print("Machine chosen, going to machine now...")
             machineList.sort(key = lambda x:x[1])
             state = "" #Doesn't matter what this is.
-            chosenMachine = machineList[0]  #Based on machining time?
-            partAgent.client.publish("/confirmation",chosenMachine[0] + "," +  "You are chosen")
+            chosenMachine = machineList[0]  #Based on machining time    
+            partAgent.client.publish("/confirmation",agentName + "," + chosenMachine[0] + "," +  "You are chosen")
             partAgent.client.publish("/pathRequests",agentName + "," + currentNode + "," + targetNode)
+
+
+            #Reset for now
+            taskList = []
 
 
             #wait to recieve response amd do graph stuff....pygame.examples.mask.main()
