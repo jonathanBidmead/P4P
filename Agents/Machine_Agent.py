@@ -41,7 +41,7 @@ def msg_func(client,userdata,msg):
     if(topic == "/partBids"):
         if(acceptingBids and (msg_split[2] in machineCapabilites)):
             #Implement the bit where it ignores same agents
-            partBids.append((msg_split[0]),float(msg_split[1]))
+            partBids.append((msg_split[0],float(msg_split[1])))
             
     if(topic == "/confirmation"):
         if(not acceptingBids and not machineBooked):
@@ -89,7 +89,7 @@ while True:
             print("Processing Bids")
             partBids.sort(key = lambda x:x[1],reverse=True)
             chosenPart = partBids[0]
-            latheAgent.client.publish("/machineBids",machineName + "," + speed + ",", chosenPart[0]) #Decide msg pattern
+            latheAgent.client.publish("/machineBids",machineName + "," + str(speed) + "," + chosenPart[0]) #Decide msg pattern
             prevTime = time.time()
             currentTime = prevTime
             while(currentTime - prevTime < 5):
@@ -105,7 +105,7 @@ while True:
     else:
         if(operationRequest):
             print("Operation completed")
-            latheAgent.client.publish("/confirmation" + machineName + "," + chosenPart + "," + "done")
+            latheAgent.client.publish("/confirmation",machineName + "," + chosenPart + "," + "done")
             machineBooked = False
             partBids = []
             acceptingBids = True

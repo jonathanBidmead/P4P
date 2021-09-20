@@ -27,11 +27,13 @@ client.username_pw_set("sahilbhatiani28@gmail.com", "v6SdZbjKzVvmX2b")
 client.connect("0f6e8bd5af354092825491bb09ee56da.s1.eu.hivemq.cloud", 8883)
 
 # subscribe to the topic "my/test/topic"
-client.subscribe("my/test/topic")
+client.subscribe("/machineBids")
 
 # publish "Hello" to the topic "my/test/topic"
 while True:
     client.connect("0f6e8bd5af354092825491bb09ee56da.s1.eu.hivemq.cloud", 8883)
     client.loop(0.1)
     sleep(5)
+
+    client.publish("/machineBids","Yo wassup")
 

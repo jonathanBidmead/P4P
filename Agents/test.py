@@ -8,5 +8,9 @@ from MultiAgent import smartServer
 
 
 
-a = smartServer.smartOpcua("localhost",7000,"bob","server")
+a = smartServer.smartMqtt("bob")
+a.client.subscribe("/machineBids")
+
+while True:
+    a.client.publish("/machineBids","Hello world!")
 
