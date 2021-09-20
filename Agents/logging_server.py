@@ -12,7 +12,7 @@ import datetime
 loggingAgent = smartServer.smartMqtt("loggingAgent")
 
 #creating/subscribing to pertinent mqtt topics
-loggingAgent.client.subscribe("/activeResources")
+loggingAgent.client.subscribe("/graphLogging")
 loggingAgent.client.subscribe("/pathRequests")
 
 #for reference: what text files even exist?
@@ -33,7 +33,7 @@ def msg_func(client,userdata,msg):
     file = open("test_log.txt","a")
     file.write("Received message: " + msg.topic + " -> " + msg_decoded + '\n')
     file.close()
-    if(msg.topic == "/activeResources"):
+    if(msg.topic == "/graphLogging"):
         if (is_initial_graph):
             if(msg_decoded[0:3] == "ADD"):
                 tempData = msg_decoded.split(",")
