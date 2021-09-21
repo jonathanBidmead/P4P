@@ -105,6 +105,7 @@ partAgent.client.subscribe("/confirmation")
 partAgent.client.subscribe("/pathRequests")
 partAgent.client.subscribe("/movement")
 partAgent.client.subscribe("/pathResponses")
+partAgent.client.subscribe("/partAgentLogging")
 partAgent.client.on_message = msg_func
 
 while (len(taskList) != 0):
@@ -176,6 +177,8 @@ while (len(taskList) != 0):
                         while(not movementFinished):
                             partAgent.client.loop(0.1)
                         currentNode = targetPath[0]
+                        partAgent.client.publish("/partAgentLogging",agentName + "," + currentNode)
+                       
 
             #Machine Agent stuff happens now - also account for if in buffer or at final output platform
             state = States.atMachine
