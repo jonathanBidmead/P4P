@@ -72,12 +72,13 @@ def msg_func(client,userdata,msg):
     
     if(msg.topic == "/movement"):
         tempData = msg_decoded.split(",")
-        adjacentList = initialAdjacents.split(",")
-        if(tempData[1] in adjacentList and tempData[2] in adjacentList and not busy):#if part agent current node and target node both adjacent to this movement agent & this agent isn't currently busy
-            movementAgent.client.publish("/movement",tempData[0] + "," + movementAgent.name + "," + "BGN")
-            global currentPartAgent
-            currentPartAgent = tempData[0]
-            startMovement(tempData[1],tempData[2])
+        if(tempData[1] == movementAgent.name):#only respond if the part agent requested this agent specifically
+            adjacentList = initialAdjacents.split(",")
+            if(tempData[2] in adjacentList and tempData[3] in adjacentList and not busy):#if part agent current node and target node both adjacent to this movement agent & this agent isn't currently busy
+                movementAgent.client.publish("/movement",tempData[0] + "," + movementAgent.name + "," + "BGN")
+                global currentPartAgent
+                currentPartAgent = tempData[0]
+                startMovement(tempData[2],tempData[3])
 
 #communicating with the opcua layer
 def startMovement(startNode,targetNode):

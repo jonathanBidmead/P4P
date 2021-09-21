@@ -58,8 +58,9 @@ def msg_func(client,userdata,msg):
                     adj_string = ""
                     for agent in adjacent_list:
                         adj_string = adj_string + "," + agent
-                    file.write(tempData[1]+adj_string+"\n")
+                    file.write(tempData[1]+","+tempData[3]+adj_string+"\n")
                     file.close()
+                    print("adding line to initial graph")
             
             if(msg_decoded[0:3] == "DEL" or msg_decoded[0:3] == "OFF"):
                 tempData = msg_decoded.split(",")
@@ -72,11 +73,12 @@ def msg_func(client,userdata,msg):
 
                 file.close()
 
-        if (~is_initial_graph):
+        if (not is_initial_graph):
             file = open("test_ongoing_layout_graph.txt","a")
             file.write(str(datetime.datetime.now()) + ",")
             file.write(msg_decoded + '\n')
             file.close()
+            print("ongoing update")
 
 
     
@@ -102,6 +104,6 @@ initTime = datetime.datetime.now()
 while True:
     loggingAgent.client.loop(0.1)
 
-    if(datetime.datetime.now() - initTime > datetime.timedelta(seconds=5)):#TODO: make a better condition for switching from initialisation/setup to ongoing updates
+    if(datetime.datetime.now() - initTime > datetime.timedelta(seconds=15)):#TODO: make a better condition for switching from initialisation/setup to ongoing updates
         is_initial_graph = False
 
