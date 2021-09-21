@@ -51,7 +51,10 @@ def msg_func(client,userdata,msg):
         tempData = msg_decoded.split(",")
         path = bfs(tempData[1],tempData[2])
         print("Path Between Nodes" + str(path))
-        graphAgent.client.publish("/pathResponses",tempData[1] + "," + str(path))
+        pathStr = ""
+        for node in path:
+            pathStr = pathStr + "/" + node
+        graphAgent.client.publish("/pathResponses",tempData[0] + "," + tempData[1] + "," + pathStr)
     
     #pinging response (copy paste this to other servers)
     if(msg.topic == "/keepAlivePings"):
