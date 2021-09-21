@@ -9,8 +9,11 @@ from MultiAgent import smartServer
 
 
 a = smartServer.smartMqtt("bob")
-a.client.subscribe("/machineBids")
+a.client.subscribe("/pathRequests")
+a.client.subscribe("/pathResponses")
 
-while True:
-    a.client.publish("/machineBids","Hello world!")
+a.client.publish("/pathRequests","Agen1" + "," + "DUMMY_AGENT" + "," + "LINEAR_CONVEYER")
+
+
+a.client.loop_forever()
 

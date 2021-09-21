@@ -44,8 +44,8 @@ def msg_func(client,userdata,msg):
             partBids.append((msg_split[0],float(msg_split[1])))
             
     if(topic == "/confirmation"):
-        if((not acceptingBids) and (not machineBooked)):
-            if(msg_split[1] == machineName):
+        if((not acceptingBids) and (not machineBooked)): 
+            if(msg_split[1] == machineName): #Add a check to see if the message is coming from the expected part agent?
                 confirmationRecieved = True
 
     if(topic == "/machining"):
