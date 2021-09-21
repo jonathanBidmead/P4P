@@ -38,7 +38,7 @@ newAgents = []
 #interuppt on receiving a message
 def msg_func(client,userdata,msg):
     msg_decoded = msg.payload.decode("utf-8")
-    print("Received message: " + msg.topic + " -> " + msg_decoded)
+    # print("Received message: " + msg.topic + " -> " + msg_decoded)
     
     if(msg.topic == "/activeResources"):
         tempData = msg_decoded.split(",")
@@ -52,8 +52,10 @@ def msg_func(client,userdata,msg):
         path = bfs(tempData[1],tempData[2])
         print("Path Between Nodes" + str(path))
         pathStr = ""
+        #creating string of path between nodes
         for node in path:
             pathStr = pathStr + "/" + node
+        pathStr = pathStr.lstrip("/")#getting rid of leading slash
         graphAgent.client.publish("/pathResponses",tempData[0] + "," + tempData[1] + "," + pathStr)
     
     #pinging response (copy paste this to other servers)
@@ -199,7 +201,7 @@ while True:
     graphAgent.client.loop(0.2)
     
     #DEBUG
-    print("active agents     :" + str(activeAgents))
+    # print("active agents     :" + str(activeAgents))
     # print("responsive agents :" + str(responsiveAgents))
     #send a ping every so often to figure out what agents are still active
     newTime = datetime.datetime.now()

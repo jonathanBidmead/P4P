@@ -1,3 +1,4 @@
+# from Agents.OPCUA_SERVERS.test_movement_server import move
 import sys
 from urllib.request import DataHandler
 #mqtt imports and stuff
@@ -43,25 +44,29 @@ startMoveBetweenNodes = method[3]
 
 
 #things to change when making different movement agents
-name = "MOVEMENT_AGENT_TEST"
-guiLocation = "0 0"
-initialAdjacents = "NODE2,NODE1"
+name = "KR16"
+guiLocation = "-5 2"
+initialAdjacents = "LINEAR_CONVEYOR CIRCULAR_CONVEYOR PLATFORM"
 
 #creating server instance
 movementAgent = smartServer.smartMqtt(name)
 
-#internal variable for when this agent is in use
-# busy = False
+#internal variables for start and end resources of this movement
+startAgent = ""
+endAgent = ""
 
 #creating/subscribing to pertinent mqtt topics
 movementAgent.client.subscribe("/activeResources")
 movementAgent.client.subscribe("/movement")
 movementAgent.client.subscribe("/keepAlivePings")
+movementAgent.client.subscribe("/isResourceAvailable")
 
 #send initialisation to central graph server
-movementAgent.client.publish("/activeResources","ADD," + movementAgent.name + ",MOVEMENT," + guiLocation + "," + initialAdjacents)
-
+movementAgent.client.publish("/activeResources","ADD," + movementAgent.name + ",TRANSPORT," + guiLocation + "," + initialAdjacents)
+initialAdjacents = initialAdjacents + " " + name
 def msg_func(client,userdata,msg):
+    global startAgent
+    global endAgent
     msg_decoded = msg.payload.decode("utf-8")
 
     #pinging response (copy paste this to other servers)
@@ -72,13 +77,35 @@ def msg_func(client,userdata,msg):
     
     if(msg.topic == "/movement"):
         tempData = msg_decoded.split(",")
-        if(tempData[1] == movementAgent.name):#only respond if the part agent requested this agent specifically
-            adjacentList = initialAdjacents.split(",")
-            if(tempData[2] in adjacentList and tempData[3] in adjacentList and not busy):#if part agent current node and target node both adjacent to this movement agent & this agent isn't currently busy
-                movementAgent.client.publish("/movement",tempData[0] + "," + movementAgent.name + "," + "BGN")
+        if(tempData[1] == movementAgent.name and tempData[2] != "BGN" and tempData[2] != "END"):#only respond if the part agent requested this agent specifically
+            adjacentList = initialAdjacents.split(" ")
+            startAgent = tempData[2]
+            endAgent = tempData[3]
+            if(startAgent in adjacentList and endAgent in adjacentList and not busy):#if part agent current node and target node both adjacent to this movement agent & this agent isn't currently busy
+                
                 global currentPartAgent
                 currentPartAgent = tempData[0]
-                startMovement(tempData[2],tempData[3])
+                #checking if the first resource agent is available currently
+                if(startAgent == movementAgent.name):
+                    movementAgent.client.publish("/isResourceAvailable",endAgent)
+                if(endAgent == movementAgent.name):
+                    movementAgent.client.publish("/isResourceAvailable",startAgent)
+
+            else:# if the movement was not accepted, clear these variables
+                startAgent = ""
+                endAgent = ""
+
+    if(msg.topic == "/isResourceAvailable"):
+        tempData = msg_decoded.split(",")
+        #
+        if(len(tempData) == 2 and tempData[0] == startAgent and tempData[0] != movementAgent.name):
+            movementAgent.client.publish("/movement",currentPartAgent + "," + movementAgent.name + "," + "BGN")
+            startMovement(startAgent,endAgent)
+        if(len(tempData) == 2 and tempData[0] == endAgent and tempData[0] != movementAgent.name):
+            movementAgent.client.publish("/movement",currentPartAgent + "," + movementAgent.name + "," + "BGN")
+            startMovement(startAgent,endAgent)
+        if(tempData == movementAgent.name):
+            movementAgent.client.publish("/isResourceActive",movementAgent.name + ",YES")
 
 #communicating with the opcua layer
 def startMovement(startNode,targetNode):
@@ -99,6 +126,7 @@ while True:
     if(busy and not currentlyMoving):
         currentlyMoving = True
 
+    #movement completed
     if(not busy and currentlyMoving):
         movementAgent.client.publish("/movement",currentPartAgent + "," + movementAgent.name + ",END")
         currentPartAgent = ""

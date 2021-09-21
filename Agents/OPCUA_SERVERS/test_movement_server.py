@@ -58,6 +58,7 @@ def move(startPoint,endPoint):
     time.sleep(5)
     global move_start_flag
     move_start_flag = False
+    print("Movement Complete")
     movementServer.objects.get_children()[2].set_value(False)
 
 #add methods to opcua server
