@@ -12,7 +12,7 @@ a = smartServer.smartMqtt("bob")
 a.client.subscribe("/pathRequests")
 a.client.subscribe("/pathResponses")
 
-a.client.publish("/pathRequests","Agent1" + "," + "LATHE" + "," + "LINEAR_CONVEYOR")
+a.client.publish("/pathRequests","Agent1" + "," + "LINEAR_CONVEYOR" + "," + "CIRCULAR_CONVEYOR")
 a.client.publish("/movement","Agent1," + "KR16," + "LINEAR_CONVEYOR,KR16")
 
 a.client.loop_forever()

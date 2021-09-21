@@ -14,6 +14,7 @@ class States(enum.Enum):
     acceptingBids = 1
     findingPath = 2
     followingPath = 3
+    atMachine = 4
 
 
 #Variables and Flags
@@ -29,6 +30,9 @@ state = ""
 targetPath = []
 currentNode = "Linear Conveyer"
 targetNode = ""
+movementMachine = ""
+movementStarted = False
+movementFinished = False
 
 def reset():
     global currentTask
@@ -36,16 +40,28 @@ def reset():
     global machineList
     global state
     global targetPath
+    global movementMachine
+    global movementStarted
+    global movementFinished
 
     currentTask = ""
     taskDone = False
     machineList = []
     state = ""
     targetPath = []
+    movementMachine = ""
+    movementStarted = False
+    movementFinished = False
 
 
 def msg_func(client,userdata,msg):
     global state
+    global targetPath
+    global movementFinished
+    global movementStarted
+    global currentNode
+    global movementMachine
+    global taskDone
 
     msg_decoded = msg.payload.decode("utf-8")
     print("Received message: " + msg.topic + " -> " + msg_decoded)
@@ -57,15 +73,24 @@ def msg_func(client,userdata,msg):
             if(msg_split[2] == agentName):
                 machineList.append((msg_split[0],float(msg_split[1])))
     
-    if(topic == "/pathRequests"):
-        if(state == States.findingPath):
-            #Append to target path
-            pass
+    if(topic == "/pathResponses"):
+        if(state == States.findingPath and msg_split[0] == agentName):
+            targetPath = msg_split[2].split("/")
 
     if(topic == "/movement"):
-        if(state == States.followingPath):
-            #Work this out
-            pass
+        if(state == States.followingPath and msg_split[1] == movementMachine and msg_split[0] == agentName):
+            if(msg_split[2] == "BGN"):
+                movementStarted = True
+            if(msg_split[2] == "END"):
+                movementFinished = True
+    
+    if(topic == "/confirmation"):
+        if(state == States.atMachine and msg_split[0] == currentNode and msg_split[1] == agentName):
+            taskDone = True
+
+
+
+    
 
 
 
@@ -79,6 +104,7 @@ partAgent.client.subscribe("/partAgents")
 partAgent.client.subscribe("/confirmation")
 partAgent.client.subscribe("/pathRequests")
 partAgent.client.subscribe("/movement")
+partAgent.client.subscribe("/pathResponses")
 partAgent.client.on_message = msg_func
 
 while (len(taskList) != 0):
@@ -128,16 +154,48 @@ while (len(taskList) != 0):
                     print("No path found, going to auction again :(")
                     break
                 else:
+                    movementMachine = targetPath[0]
                     state = States.followingPath
+                    movementStarted = False
+                    movementFinished = False
                     #Need to talk to jonathan about how this is gonna work
-                    partAgent.client.publish("/movement",agentName + "," + targetPath[0] + "," + currentNode + "," + )
+                    partAgent.client.publish("/movement",agentName + "," + movementMachine + "," + currentNode + "," + )
 
-            #-----------------------------------------------------------------------------------------
-            
+                    prevTime = time.time()
+                    currentTime = prevTime
 
-            #Once, target node is reached request for operation and set taskDone = True
-            reset()
-            taskDone = True
+                    while(currentTime - prevTime < 5):
+                        if(movementStarted):
+                            break
+                        currentTime = time.time()
+                        partAgent.client.loop(0.1)
+
+                    if(not movementStarted):
+                        continue
+                    else:
+                        while(not movementFinished):
+                            partAgent.client.loop(0.1)
+                        currentNode = targetPath[0]
+
+            #Machine Agent stuff happens now - also account for if in buffer or at final output platform
+            state = States.atMachine
+            if("buffer" in currentNode): #Look into buffer naming
+                reset()
+            elif("output" in currentNode): #If you end up in an output node
+                taskDone = True
+            else:
+                partAgent.client.publish("/machining",agentName + "," + currentNode + "," + currentTask)
+                while(not taskDone):
+                    partAgent.client.loop(0.1)
+
+
+
+
+
+
+
+
+    
 
 
 
