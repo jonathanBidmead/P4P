@@ -44,9 +44,9 @@ startMoveBetweenNodes = method[3]
 
 
 #things to change when making different movement agents
-name = "KR16"
+name = "KR10"
 guiLocation = "-5 2"
-initialAdjacents = "LINEAR_CONVEYOR CIRCULAR_CONVEYOR PLATFORM"
+initialAdjacents = "CIRCULAR_CONVEYOR LATHE EXIT_PLATFORM"
 
 #creating server instance
 movementAgent = smartServer.smartMqtt(name)

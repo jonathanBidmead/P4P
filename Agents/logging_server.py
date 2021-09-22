@@ -14,7 +14,7 @@ loggingAgent = smartServer.smartMqtt("loggingAgent")
 #creating/subscribing to pertinent mqtt topics
 loggingAgent.client.subscribe("/graphLogging")
 loggingAgent.client.subscribe("/pathRequests")
-
+loggingAgent.client.subscribe("/partAgentLogging")
 #for reference: what text files even exist?
 # agent_locations - All resource agent locations in the GUI
 # buffer_agents    - List of Resource Agent Associated Names that are Buffer Type
@@ -80,6 +80,13 @@ def msg_func(client,userdata,msg):
             file.close()
             print("ongoing update")
 
+    if(msg.topic == "/partAgentLogging"):
+        file = open("test_part_agent_log.txt","a")
+        file.write(str(datetime.datetime.now()) + ",")
+        file.write(msg_decoded + '\n')
+        file.close()
+        print("part agent movement")
+
 
     
 
@@ -98,6 +105,11 @@ f.close()
 f = open("test_ongoing_layout_graph.txt","w")
 f.write("")
 f.close()
+
+f = open("test_part_agent_log.txt","w")
+f.write("")
+f.close()
+
 
 initTime = datetime.datetime.now()
 

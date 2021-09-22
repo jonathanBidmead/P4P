@@ -22,6 +22,8 @@ graphAgent.client.subscribe("/graphLogging")
 
 #creating graph describing the layout of all resources
 layout_graph = dict()
+#dictionary for types of all resources
+type_dict = dict()
 
 #time since last ping 
 lastTime = datetime.datetime.now()
@@ -50,11 +52,14 @@ def msg_func(client,userdata,msg):
     if(msg.topic == "/pathRequests"):
         tempData = msg_decoded.split(",")
         path = bfs(tempData[1],tempData[2])
-        print("Path Between Nodes" + str(path))
+        print("Path Between Nodes: " + str(path))
         pathStr = ""
         #creating string of path between nodes
-        for node in path:
-            pathStr = pathStr + "/" + node
+        if (path != None):
+            for node in path:
+                pathStr = pathStr + "/" + node
+        else:
+            pathStr = str(path)
         pathStr = pathStr.lstrip("/")#getting rid of leading slash
         graphAgent.client.publish("/pathResponses",tempData[0] + "," + tempData[1] + "," + pathStr)
     
@@ -82,11 +87,11 @@ def msg_func(client,userdata,msg):
 graphAgent.client.on_message = msg_func
 
 #maximum search depth for bfs
-max_iters = 256
+max_iters = 10000
 
 #number of seconds machines have to respond to a ping before being considered offline
 PINGING_TIMEOUT = 5#not used currently,. current implementation is to give each resource until the next ping happens to respond
-PING_FREQUENCY = 5
+PING_FREQUENCY = 3
 
 #breadth-first search through the graph to find a path
 def bfs(start, end):
@@ -120,12 +125,23 @@ def bfs(start, end):
         # path found
         if nodeN == end:
             print('path found')
+            #getting first transport node in path
+            firstTransport = ""
+            for node in path:
+                if type_dict[node] == "TRANSPORT":
+                    firstTransport = node
+                    print("first transport node: " + firstTransport)
+            path.append(firstTransport)
             return path
         # enumerate all adjacent nodes, construct a new path and push it into the queue
         for adjacent in graph.get(nodeN, []):
             new_path = list(path)
             new_path.append(adjacent)
             queue.append(new_path)
+    
+    
+    print("no path found")
+    return ['no path exists']
 
 
 
@@ -145,6 +161,9 @@ def add_node(node,adjacent_nodes,type,GUI_location):
                 temp.add(node)
                 # print(temp)
                 layout_graph.update({key:temp})
+    
+    #adding node type to typedict
+    type_dict.update({node:type})
     #logging this action
     adj_str = ""
     #reformatting the adjacent nodes to a string

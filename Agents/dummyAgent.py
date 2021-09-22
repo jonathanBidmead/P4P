@@ -23,13 +23,13 @@ def msg_func(client,userdata,msg):
             print("responding to ping")
             agent = dummyAgent#replace with current agent
             agent.client.publish("/keepAlivePings",agent.name)
-            # agent.client.publish("/keepAlivePings","KR16")
+            agent.client.publish("/keepAlivePings","KR16")
             agent.client.publish("/keepAlivePings","LINEAR_CONVEYOR")
-            agent.client.publish("/keepAlivePings","PLATFORM")
+            agent.client.publish("/keepAlivePings","BUFFER1")
             agent.client.publish("/keepAlivePings","CIRCULAR_CONVEYOR")
-            agent.client.publish("/keepAlivePings","KR10")
-            agent.client.publish("/keepAlivePings","LATHE")
-            agent.client.publish("/keepAlivePings","EXIT_PLATFORM")
+            # agent.client.publish("/keepAlivePings","KR10")
+            # agent.client.publish("/keepAlivePings","LATHE")
+            agent.client.publish("/keepAlivePings","EXIT_BUFFER")
 
     if(msg.topic == "/isResourceAvailable"):
         tempData = msg_decoded
@@ -53,11 +53,11 @@ dummyAgent.client.publish("/activeResources","ADD,DUMMY_AGENT,BUFFER,0 0,KR10 LI
 #DEBUG: publish initial layout to activeResources topic (this will be offloaded to somewhere else eventually)
 dummyAgent.client.publish("/activeResources","ADD,LINEAR_CONVEYOR,BUFFER,-10 2,KR16")
 # dummyAgent.client.publish("/activeResources","ADD,KR16,TRANSPORT,-5 2,LINEAR_CONVEYOR CIRCULAR_CONVEYOR PLATFORM")
-dummyAgent.client.publish("/activeResources","ADD,PLATFORM,BUFFER,-5 6,KR16")
+dummyAgent.client.publish("/activeResources","ADD,BUFFER1,BUFFER,-5 6,KR16")
 dummyAgent.client.publish("/activeResources","ADD,CIRCULAR_CONVEYOR,BUFFER,0 2,KR16,KR10")
-dummyAgent.client.publish("/activeResources","ADD,KR10,TRANSPORT,5 2,CIRCULAR_CONVEYOR LATHE EXIT_PLATFORM")
-dummyAgent.client.publish("/activeResources","ADD,LATHE,MACHINE,5 6,KR10")
-dummyAgent.client.publish("/activeResources","ADD,EXIT_PLATFORM,BUFFER,10 2,KR10")
+# dummyAgent.client.publish("/activeResources","ADD,KR10,TRANSPORT,5 2,CIRCULAR_CONVEYOR LATHE EXIT_PLATFORM")
+# dummyAgent.client.publish("/activeResources","ADD,LATHE,MACHINE,5 6,KR10")
+dummyAgent.client.publish("/activeResources","ADD,EXIT_BUFFER,BUFFER,10 2,KR10")
 
 while True:
     dummyAgent.client.loop(0.1)

@@ -9,7 +9,7 @@ import time
 #OPCUA stuff to be implemented later. Refer to Lathe1.py for implementing OPCUA stuff
 
 #Variables and Flags
-machineCapabilites = ["Lathe"]
+machineCapabilites = ["LATHE"]
 machineBooked = False
 partBids = []
 acceptingBids = True
@@ -18,10 +18,24 @@ prevTime = 0
 confirmationRecieved = False
 operationRequest = False
 speed = 100
-chosenPart = ""
+chosenPart = ("",0)
 
-machineName = "lathe1"
+machineName = "LATHE"
 
+def reset():
+    global machineBooked
+    global partBids
+    global acceptingBids
+    global confirmationRecieved
+    global operationRequest
+    global chosenPart
+
+    machineBooked = False
+    partBids = []
+    acceptingBids = True
+    confirmationRecieved = False
+    operationRequest = False
+    chosenPart = ("",0)
 
 
 
@@ -34,7 +48,7 @@ def msg_func(client,userdata,msg):
     global confirmationRecieved
 
     msg_decoded = msg.payload.decode("utf-8")
-    print("Received message: " + msg.topic + " -> " + msg_decoded)
+    # print("Received message: " + msg.topic + " -> " + msg_decoded)
     topic = msg.topic
     msg_split = msg_decoded.split(",")
 
@@ -49,9 +63,31 @@ def msg_func(client,userdata,msg):
                 confirmationRecieved = True
 
     if(topic == "/machining"):
-        if(msg_split[1] == machineName and msg_split[0] == chosenPart):
+        print("------------")
+        print(msg_split)
+        print(machineName)
+        print(chosenPart)
+        print("--------------------")
+        if(msg_split[1] == machineName and msg_split[0] == chosenPart[0]):
+            print("MachineBooked: " + str(machineBooked))
             if(machineBooked):
                 operationRequest = True
+
+    if(msg.topic == "/keepAlivePings"):
+        if(msg_decoded == "PING"):
+            print("responding to ping")
+            agent = latheAgent#replace with current agent
+            agent.client.publish("/keepAlivePings",agent.name)
+    
+    if(msg.topic == "/cancellation" and msg_split[0] == chosenPart[0] and msg_split[1] == machineName):
+        print("Contract Cancelled")
+        reset()
+
+    if(msg.topic == "/isResourceAvailable"):
+        agent = latheAgent
+        if(msg_decoded == agent.name):
+            agent.client.publish("/isResourceAvailable",agent.name + ",YES")
+
     
 
         
@@ -64,7 +100,14 @@ latheAgent.client.subscribe("/machineBids")
 latheAgent.client.subscribe("/machining")
 latheAgent.client.subscribe("/partAgents")
 latheAgent.client.subscribe("/confirmation")
+latheAgent.client.subscribe("/keepAlivePings")
+latheAgent.client.subscribe("/activeResources")
+latheAgent.client.subscribe("/cancellation")
+latheAgent.client.subscribe("/isResourceAvailable")
 latheAgent.client.on_message = msg_func
+
+#adding to graph agent
+latheAgent.client.publish("/activeResources","ADD,LATHE,MACHINE,5 6,KR10")
 
 while True:
     latheAgent.client.loop(0.1)
@@ -98,7 +141,7 @@ while True:
                 latheAgent.client.loop(0.1)
             if(confirmationRecieved == True):
                 print("3-way handshake complete")
-                machineBooked = True
+                machineBooked = True 
             else:
                 acceptingBids = True
                 partBids = []
@@ -106,7 +149,7 @@ while True:
     else:
         if(operationRequest):
             print("Operation completed")
-            latheAgent.client.publish("/confirmation",machineName + "," + chosenPart + "," + "done")
+            latheAgent.client.publish("/confirmation",machineName + "," + chosenPart[0] + "," + "done")
             machineBooked = False
             partBids = []
             acceptingBids = True

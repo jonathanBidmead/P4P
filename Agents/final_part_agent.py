@@ -5,7 +5,7 @@ from MultiAgent import smartServer
 from opcua import uamethod
 import asyncio
 import time
-import enum
+import enum 
 
 
 #OPCUA stuff to be implemented later. Refer to Lathe1.py for implementing OPCUA stuff
@@ -18,8 +18,8 @@ class States(enum.Enum):
 
 
 #Variables and Flags
-agentName = sys.argv[1]
-taskList = ["Lathe","task2"]
+agentName = str(sys.argv[1])
+taskList = ["LATHE"]
 currentTask = ""
 taskDone = False
 machineList = []
@@ -28,7 +28,8 @@ prevTime = 0
 score = float(sys.argv[2])
 state = ""
 targetPath = []
-currentNode = "Linear Conveyer"
+currentNode = "CIRCULAR_CONVEYOR"
+nextNode = ""
 targetNode = ""
 movementMachine = ""
 movementStarted = False
@@ -43,6 +44,7 @@ def reset():
     global movementMachine
     global movementStarted
     global movementFinished
+    global nextNode
 
     currentTask = ""
     taskDone = False
@@ -52,6 +54,8 @@ def reset():
     movementMachine = ""
     movementStarted = False
     movementFinished = False
+    nextNode = ""
+
 
 
 def msg_func(client,userdata,msg):
@@ -106,7 +110,12 @@ partAgent.client.subscribe("/pathRequests")
 partAgent.client.subscribe("/movement")
 partAgent.client.subscribe("/pathResponses")
 partAgent.client.subscribe("/partAgentLogging")
+partAgent.client.subscribe("/cancellation")
 partAgent.client.on_message = msg_func
+
+#Jono addition: when part agent first initialises, print its location
+partAgent.client.publish("/partAgentLogging",partAgent.name + "," + currentNode)
+
 
 while (len(taskList) != 0):
     partAgent.client.loop(0.1)
@@ -143,7 +152,7 @@ while (len(taskList) != 0):
 
             #Start to follow path to target node (chosen Machine)
             #-----------------------------------------------------------------------------------
-            targetNode = chosenMachine
+            targetNode = chosenMachine[0]
             while(currentNode != targetNode):
                 targetPath = []
                 partAgent.client.publish("/pathRequests",agentName + "," + currentNode + "," + targetNode)
@@ -153,14 +162,17 @@ while (len(taskList) != 0):
                 if(targetPath[0] == "no path exists"):
                     reset()
                     print("No path found, going to auction again :(")
+                    partAgent.client.publish("/cancellation",agentName+ "," + chosenMachine[0])
                     break
                 else:
-                    movementMachine = targetPath[0]
+                    print("path exists (GOOD TO SEE)")
+                    movementMachine = targetPath[-1]
+                    nextNode = targetPath[1]
                     state = States.followingPath
                     movementStarted = False
                     movementFinished = False
-                    #Need to talk to jonathan about how this is gonna work
-                    partAgent.client.publish("/movement",agentName + "," + movementMachine + "," + currentNode + "," + )
+
+                    partAgent.client.publish("/movement",agentName + "," + movementMachine + "," + currentNode + "," + nextNode)
 
                     prevTime = time.time()
                     currentTime = prevTime
@@ -176,20 +188,23 @@ while (len(taskList) != 0):
                     else:
                         while(not movementFinished):
                             partAgent.client.loop(0.1)
-                        currentNode = targetPath[0]
+                        currentNode = nextNode
                         partAgent.client.publish("/partAgentLogging",agentName + "," + currentNode)
+                    state = States.findingPath
                        
 
-            #Machine Agent stuff happens now - also account for if in buffer or at final output platform
-            state = States.atMachine
-            if("buffer" in currentNode): #Look into buffer naming
-                reset()
-            elif("output" in currentNode): #If you end up in an output node
-                taskDone = True
-            else:
-                partAgent.client.publish("/machining",agentName + "," + currentNode + "," + currentTask)
-                while(not taskDone):
-                    partAgent.client.loop(0.1)
+
+            if(state == States.findingPath):
+                #Machine Agent stuff happens now - also account for if in buffer or at final output platform
+                state = States.atMachine
+                if("BUFFER" in currentNode): #Look into buffer naming
+                    reset()
+                elif("OUTPUT" in currentNode): #If you end up in an output node
+                    taskDone = True
+                else:
+                    partAgent.client.publish("/machining",agentName + "," + currentNode + "," + currentTask)
+                    while(not taskDone):
+                        partAgent.client.loop(0.1)
 
 
 
