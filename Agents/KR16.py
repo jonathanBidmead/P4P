@@ -12,8 +12,8 @@ import datetime
 #opcua imports and stuff
 from opcua import Client
 url = "localhost"
-port = 7002#CHANGE
-name = "MOVEMENT_AGENT_CLIENT"#CHANGE
+port = 7004#CHANGE
+name = "KR16_CLIENT"#CHANGE
 end_point = "opc.tcp://{}:{}".format(url, port)
 opcClient = smartServer.smartOpcua(url,port,name,"client")
 opcClient.client.connect()
@@ -44,9 +44,9 @@ startMoveBetweenNodes = method[3]
 
 
 #things to #CHANGE when making different movement agents
-name = "KR10"
+name = "KR16"
 guiLocation = "-5 2"
-initialAdjacents = "CIRCULAR_CONVEYOR LATHE EXIT_PLATFORM"
+initialAdjacents = "CIRCULAR_CONVEYOR LINEAR_CONVEYOR BUFFER1 LATHE_2"
 
 #creating server instance
 movementAgent = smartServer.smartMqtt(name)
@@ -122,18 +122,16 @@ while True:
     movementAgent.client.loop(0.1)
 
     busy = method[2].get_data_value().Value.Value
-
-    if(busy and not currentlyMoving):
-        currentlyMoving = True
-
+        
     #movement completed
     if(not busy and currentlyMoving):
         movementAgent.client.publish("/movement",currentPartAgent + "," + movementAgent.name + ",END")
-        currentPartAgent = ""
+        # currentPartAgent = ""
         currentlyMoving = False
         print("Finished Motion")
 
-
+    if(busy and not currentlyMoving):
+        currentlyMoving = True
     #DEBUG
     # time.sleep(2)
     # print("sending command")

@@ -28,7 +28,7 @@ prevTime = 0
 score = float(sys.argv[2])
 state = ""
 targetPath = []
-currentNode = "CIRCULAR_CONVEYOR"
+currentNode = "LINEAR_CONVEYOR"
 nextNode = ""
 targetNode = ""
 movementMachine = ""
@@ -135,7 +135,7 @@ while (len(taskList) != 0):
             partAgent.client.publish("/partBids",agentName + "," + str(score) + "," + currentTask)
             currentTime = time.time()
             prevTime = currentTime
-            while(currentTime - prevTime < 10): # Wait time needs to be double the machine time?
+            while(currentTime - prevTime < 2): # Wait time needs to be double the machine time?
                 partAgent.client.loop(0.1)
                 currentTime = time.time()
         
@@ -184,6 +184,7 @@ while (len(taskList) != 0):
                         partAgent.client.loop(0.1)
 
                     if(not movementStarted):
+                        state = States.findingPath
                         continue
                     else:
                         while(not movementFinished):
@@ -206,6 +207,7 @@ while (len(taskList) != 0):
                     while(not taskDone):
                         partAgent.client.loop(0.1)
 
+partAgent.client.publish("/partAgentLogging",partAgent.name + ",END")
 
 
 

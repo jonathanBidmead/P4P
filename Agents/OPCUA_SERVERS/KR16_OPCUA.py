@@ -11,9 +11,9 @@ import time
 
 #server params
 url = "localhost"
-port = 7002#CHANGE
+port = 7004#CHANGE
 end_point = "opc.tcp://{}:{}".format(url, port)
-name = "MOVEMENT_SERVER"#CHANGE
+name = "KR16_SERVER"
 # create server instance/object
 movementServer = smartServer.smartOpcua(url,port,name,'server')
 
@@ -55,7 +55,7 @@ def beginMove(parent,startPoint,endPoint):
 
 def move(startPoint,endPoint):
     print("Beginning movement from {} to {}".format(startPoint,endPoint))
-    time.sleep(5)
+    time.sleep(15)
     global move_start_flag
     move_start_flag = False
     print("Movement Complete")

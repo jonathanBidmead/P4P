@@ -15,6 +15,7 @@ loggingAgent = smartServer.smartMqtt("loggingAgent")
 loggingAgent.client.subscribe("/graphLogging")
 loggingAgent.client.subscribe("/pathRequests")
 loggingAgent.client.subscribe("/partAgentLogging")
+loggingAgent.client.subscribe("/pathResponses")
 #for reference: what text files even exist?
 # agent_locations - All resource agent locations in the GUI
 # buffer_agents    - List of Resource Agent Associated Names that are Buffer Type
@@ -31,7 +32,7 @@ is_initial_graph = True
 def msg_func(client,userdata,msg):
     msg_decoded = msg.payload.decode("utf-8")
     file = open("test_log.txt","a")
-    file.write("Received message: " + msg.topic + " -> " + msg_decoded + '\n')
+    file.write("at " + str(datetime.datetime.now()) + " Received message: " + msg.topic + " -> " + msg_decoded + '\n')
     file.close()
     if(msg.topic == "/graphLogging"):
         if (is_initial_graph):

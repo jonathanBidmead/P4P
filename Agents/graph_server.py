@@ -91,7 +91,7 @@ max_iters = 10000
 
 #number of seconds machines have to respond to a ping before being considered offline
 PINGING_TIMEOUT = 5#not used currently,. current implementation is to give each resource until the next ping happens to respond
-PING_FREQUENCY = 3
+PING_FREQUENCY = 5
 
 #breadth-first search through the graph to find a path
 def bfs(start, end):
@@ -131,6 +131,7 @@ def bfs(start, end):
                 if type_dict[node] == "TRANSPORT":
                     firstTransport = node
                     print("first transport node: " + firstTransport)
+                    break
             path.append(firstTransport)
             return path
         # enumerate all adjacent nodes, construct a new path and push it into the queue
@@ -225,6 +226,7 @@ while True:
     #send a ping every so often to figure out what agents are still active
     newTime = datetime.datetime.now()
     if (newTime - lastTime > datetime.timedelta(seconds=PING_FREQUENCY)):
+        # print("PINGING")
         graphAgent.client.publish("/keepAlivePings","PING")
         lastTime = datetime.datetime.now()
         
@@ -235,7 +237,7 @@ while True:
         
 
         temp_layout_dict = dict(layout_graph)
-        print("active agents" + str(activeAgents))
+        # print("active agents" + str(activeAgents))
         for key in temp_layout_dict:
             if (key in activeAgents and key not in responsiveAgents):#if an agent in layout_graph hasn't responded to ping & hasn't previously been marked offline, make it be offline
 
