@@ -6,17 +6,20 @@ sys.path.append(r'C:\Users\drago\OneDrive\Documents\GitHub\P4P')
 from MultiAgent import smartServer
 import datetime
 #creating graph agent instance
-agent = smartServer.smartMqtt("BUFFER1")#CHANGE
+agent = smartServer.smartMqtt("BUFFER_1")#CHANGE
+score = 10000
 
 #creating/subscribing to pertinent mqtt topics
 agent.client.subscribe("/activeResources")
 agent.client.subscribe("/pathRequests")
 agent.client.subscribe("/keepAlivePings")
 agent.client.subscribe("/isResourceAvailable")
+agent.client.subscribe("/partBids")
 
 def msg_func(client,userdata,msg):
     msg_decoded = msg.payload.decode("utf-8")
     print("Received message: " + msg.topic + " -> " + msg_decoded)
+    msg_split = msg_decoded.split(",")
 
     #pinging response (copy paste this to other servers)
     if(msg.topic == "/keepAlivePings"):
@@ -29,6 +32,10 @@ def msg_func(client,userdata,msg):
         print(tempData)
         if(tempData == agent.name):
             agent.client.publish("/isResourceAvailable",agent.name + ",YES")
+
+    if(msg.topic == "/partBids"):
+        agent.client.publish("/machineBids",agent.name + "," + str(score) + "," + msg_split[0])
+
 
 #defining msg_func (shortening variable names)
 agent.client.on_message = msg_func
