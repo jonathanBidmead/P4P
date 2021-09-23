@@ -19,13 +19,13 @@ class States(enum.Enum):
 
 #Variables and Flags
 agentName = str(sys.argv[1])
-taskList = ["LATHE"]
+taskList = sys.argv[2].split("-")
 currentTask = ""
 taskDone = False
 machineList = []
 currentTime = 0
 prevTime = 0
-score = float(sys.argv[2])
+score = float(sys.argv[3])
 state = ""
 targetPath = []
 currentNode = "LINEAR_CONVEYOR"
@@ -34,6 +34,12 @@ targetNode = ""
 movementMachine = ""
 movementStarted = False
 movementFinished = False
+partStartedMovingFlag = False
+
+print(taskList)
+print(score)
+print(agentName)
+
 
 def reset():
     global currentTask
@@ -111,6 +117,7 @@ partAgent.client.subscribe("/movement")
 partAgent.client.subscribe("/pathResponses")
 partAgent.client.subscribe("/partAgentLogging")
 partAgent.client.subscribe("/cancellation")
+partAgent.client.subscribe("/partBooked")
 partAgent.client.on_message = msg_func
 
 #Jono addition: when part agent first initialises, print its location
@@ -179,6 +186,9 @@ while (len(taskList) != 0):
 
                     while(currentTime - prevTime < 5):
                         if(movementStarted):
+                            if(partStartedMovingFlag == False):
+                                partAgent.client.publish("/partBooked","Motion Started")
+                                partStartedMovingFlag = True
                             break
                         currentTime = time.time()
                         partAgent.client.loop(0.1)
