@@ -57,6 +57,7 @@ endAgent = ""
 
 #internal variable to stop fuckups with multiple transport agents
 iPublishedThis = False
+endMoveFull = False
 
 #creating/subscribing to pertinent mqtt topics
 movementAgent.client.subscribe("/activeResources")
@@ -87,16 +88,18 @@ def msg_func(client,userdata,msg):
             startAgent = tempData[2]
             endAgent = tempData[3]
             if(startAgent in adjacentList and endAgent in adjacentList and not busy):#if part agent current node and target node both adjacent to this movement agent & this agent isn't currently busy
-                
-                
-                currentPartAgent = tempData[0]
-                
-                iPublishedThis = True
-                #checking if the first resource agent is available currently
-                if(startAgent == movementAgent.name):
-                    movementAgent.client.publish("/isResourceAvailable",endAgent)
-                if(endAgent == movementAgent.name):
-                    movementAgent.client.publish("/isResourceAvailable",startAgent)
+                     
+                if(endMoveFull and currentPartAgent != tempData[0]):#if the previous move left the transport agent holding a part, only accept new requests from that part's agent 
+                    pass
+                else:
+                    currentPartAgent = tempData[0]
+                    
+                    iPublishedThis = True
+                    #checking if the first resource agent is available currently
+                    if(startAgent == movementAgent.name):
+                        movementAgent.client.publish("/isResourceAvailable",endAgent)
+                    if(endAgent == movementAgent.name):
+                        movementAgent.client.publish("/isResourceAvailable",startAgent)
 
             else:# if the movement was not accepted, clear these variables
                 startAgent = ""
@@ -119,7 +122,13 @@ def msg_func(client,userdata,msg):
 #communicating with the opcua layer
 def startMovement(startNode,targetNode):
     global iPublishedThis
+    global endMoveFull
     iPublishedThis = False
+    
+    if (targetNode == movementAgent.name):
+        endMoveFull = True
+    else:
+        endMoveFull = False
     print(opcClient.objects.call_method(startMoveBetweenNodes,startNode,targetNode))
     return(opcClient.objects.call_method(startMoveBetweenNodes,startNode,targetNode))
     

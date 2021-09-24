@@ -1,27 +1,141 @@
-at 2021-09-24 15:42:41.001572 Received message: /graphLogging -> ADD,CIRCULAR_CONVEYOR,BUFFER,0 2,KR16 KR10
-at 2021-09-24 15:42:41.002536 Received message: /graphLogging -> ADD,EXIT_PLATFORM_1,BUFFER,10 2,KR10
-at 2021-09-24 15:42:41.270327 Received message: /graphLogging -> ADD,LINEAR_CONVEYOR,BUFFER,-10 2,KR16
-at 2021-09-24 15:42:41.271324 Received message: /graphLogging -> ADD,LATHE_1,MACHINE,5 6,KR10
-at 2021-09-24 15:42:42.446723 Received message: /graphLogging -> ADD,KR10,TRANSPORT,5 2,LATHE_1 CIRCULAR_CONVEYOR LATHE_3 EXIT_PLATFORM_1
-at 2021-09-24 15:42:42.719993 Received message: /graphLogging -> ADD,BUFFER_1,BUFFER,-5 6,KR16
-at 2021-09-24 15:42:43.596960 Received message: /graphLogging -> ADD,KR16,TRANSPORT,-5 2,LATHE_2 CIRCULAR_CONVEYOR LINEAR_CONVEYOR BUFFER_1
-at 2021-09-24 15:42:54.457659 Received message: /partAgentLogging -> AGENT_1,LINEAR_CONVEYOR
-at 2021-09-24 15:42:58.684753 Received message: /pathRequests -> AGENT_1,LINEAR_CONVEYOR,LATHE_1
-at 2021-09-24 15:42:58.957039 Received message: /pathResponses -> AGENT_1,LINEAR_CONVEYOR,LINEAR_CONVEYOR/KR16/CIRCULAR_CONVEYOR/KR10/LATHE_1/KR16
-at 2021-09-24 15:43:01.545430 Received message: /partAgentLogging -> AGENT_1,KR16
-at 2021-09-24 15:43:01.813156 Received message: /pathRequests -> AGENT_1,KR16,LATHE_1
-at 2021-09-24 15:43:02.086965 Received message: /pathResponses -> AGENT_1,KR16,KR16/CIRCULAR_CONVEYOR/KR10/LATHE_1/KR16
-at 2021-09-24 15:43:04.541921 Received message: /partAgentLogging -> AGENT_1,CIRCULAR_CONVEYOR
-at 2021-09-24 15:43:04.819180 Received message: /pathRequests -> AGENT_1,CIRCULAR_CONVEYOR,LATHE_1
-at 2021-09-24 15:43:05.089503 Received message: /pathResponses -> AGENT_1,CIRCULAR_CONVEYOR,CIRCULAR_CONVEYOR/KR10/LATHE_1/KR10
-at 2021-09-24 15:43:07.588863 Received message: /partAgentLogging -> AGENT_1,KR10
-at 2021-09-24 15:43:07.859142 Received message: /pathRequests -> AGENT_1,KR10,LATHE_1
-at 2021-09-24 15:43:08.133374 Received message: /pathResponses -> AGENT_1,KR10,KR10/LATHE_1/KR10
-at 2021-09-24 15:43:10.692917 Received message: /partAgentLogging -> AGENT_1,LATHE_1
-at 2021-09-24 15:43:14.177741 Received message: /pathRequests -> AGENT_1,LATHE_1,EXIT_PLATFORM_1
-at 2021-09-24 15:43:14.449015 Received message: /pathResponses -> AGENT_1,LATHE_1,LATHE_1/KR10/EXIT_PLATFORM_1/KR10
-at 2021-09-24 15:43:16.937581 Received message: /partAgentLogging -> AGENT_1,KR10
-at 2021-09-24 15:43:17.207388 Received message: /pathRequests -> AGENT_1,KR10,EXIT_PLATFORM_1
-at 2021-09-24 15:43:17.477178 Received message: /pathResponses -> AGENT_1,KR10,KR10/EXIT_PLATFORM_1/KR10
-at 2021-09-24 15:43:20.020532 Received message: /partAgentLogging -> AGENT_1,EXIT_PLATFORM_1
-at 2021-09-24 15:43:20.287796 Received message: /partAgentLogging -> AGENT_1,END
+at 2021-09-24 16:01:20.762130 Received message: /graphLogging -> ADD,EXIT_PLATFORM_1,BUFFER,10 2,KR10
+at 2021-09-24 16:01:20.796038 Received message: /graphLogging -> ADD,CIRCULAR_CONVEYOR,BUFFER,0 2,KR16 KR10
+at 2021-09-24 16:01:20.798034 Received message: /graphLogging -> ADD,BUFFER_1,BUFFER,-5 6,KR16
+at 2021-09-24 16:01:20.802023 Received message: /graphLogging -> ADD,LINEAR_CONVEYOR,BUFFER,-10 2,KR16
+at 2021-09-24 16:01:20.807010 Received message: /graphLogging -> ADD,LATHE_1,MACHINE,5 6,KR10
+at 2021-09-24 16:01:21.028452 Received message: /graphLogging -> ADD,LATHE_2,MACHINE,-5 -4,KR16
+at 2021-09-24 16:01:21.029450 Received message: /graphLogging -> ADD,LATHE_3,MACHINE,5 -4,KR10
+at 2021-09-24 16:01:22.113167 Received message: /graphLogging -> ADD,KR16,TRANSPORT,-5 2,LINEAR_CONVEYOR BUFFER_1 LATHE_2 CIRCULAR_CONVEYOR
+at 2021-09-24 16:01:22.380577 Received message: /graphLogging -> ADD,KR10,TRANSPORT,5 2,LATHE_1 EXIT_PLATFORM_1 LATHE_3 CIRCULAR_CONVEYOR
+at 2021-09-24 16:01:29.431547 Received message: /partAgentLogging -> AGENT_3,LINEAR_CONVEYOR
+at 2021-09-24 16:01:29.457477 Received message: /partAgentLogging -> AGENT_1,LINEAR_CONVEYOR
+at 2021-09-24 16:01:29.476427 Received message: /partAgentLogging -> AGENT_2,LINEAR_CONVEYOR
+at 2021-09-24 16:01:31.585616 Received message: /pathRequests -> AGENT_3,LINEAR_CONVEYOR,LATHE_1
+at 2021-09-24 16:01:31.852903 Received message: /pathResponses -> AGENT_3,LINEAR_CONVEYOR,LINEAR_CONVEYOR/KR16/CIRCULAR_CONVEYOR/KR10/LATHE_1/KR16
+at 2021-09-24 16:01:34.364803 Received message: /partAgentLogging -> AGENT_3,KR16
+at 2021-09-24 16:01:34.633087 Received message: /pathRequests -> AGENT_3,KR16,LATHE_1
+at 2021-09-24 16:01:34.899801 Received message: /pathResponses -> AGENT_3,KR16,KR16/CIRCULAR_CONVEYOR/KR10/LATHE_1/KR16
+at 2021-09-24 16:01:36.005302 Received message: /partAgentLogging -> AGENT_4,LINEAR_CONVEYOR
+at 2021-09-24 16:01:37.425858 Received message: /partAgentLogging -> AGENT_3,CIRCULAR_CONVEYOR
+at 2021-09-24 16:01:37.698129 Received message: /pathRequests -> AGENT_3,CIRCULAR_CONVEYOR,LATHE_1
+at 2021-09-24 16:01:37.963456 Received message: /pathResponses -> AGENT_3,CIRCULAR_CONVEYOR,CIRCULAR_CONVEYOR/KR10/LATHE_1/KR10
+at 2021-09-24 16:01:40.425390 Received message: /partAgentLogging -> AGENT_3,KR10
+at 2021-09-24 16:01:40.694680 Received message: /pathRequests -> AGENT_3,KR10,LATHE_1
+at 2021-09-24 16:01:40.963948 Received message: /pathResponses -> AGENT_3,KR10,KR10/LATHE_1/KR10
+at 2021-09-24 16:01:43.437963 Received message: /partAgentLogging -> AGENT_3,LATHE_1
+at 2021-09-24 16:01:44.476695 Received message: /pathRequests -> AGENT_1,LINEAR_CONVEYOR,LATHE_2
+at 2021-09-24 16:01:44.743978 Received message: /pathResponses -> AGENT_1,LINEAR_CONVEYOR,LINEAR_CONVEYOR/KR16/LATHE_2/KR16
+at 2021-09-24 16:01:46.450779 Received message: /pathRequests -> AGENT_2,LINEAR_CONVEYOR,LATHE_1
+at 2021-09-24 16:01:46.661450 Received message: /pathRequests -> AGENT_3,LATHE_1,EXIT_PLATFORM_1
+at 2021-09-24 16:01:46.719385 Received message: /pathResponses -> AGENT_2,LINEAR_CONVEYOR,LINEAR_CONVEYOR/KR16/CIRCULAR_CONVEYOR/KR10/LATHE_1/KR16
+at 2021-09-24 16:01:46.983653 Received message: /pathResponses -> AGENT_3,LATHE_1,LATHE_1/KR10/EXIT_PLATFORM_1/KR10
+at 2021-09-24 16:01:47.236986 Received message: /partAgentLogging -> AGENT_1,KR16
+at 2021-09-24 16:01:47.252946 Received message: /pathRequests -> AGENT_1,KR16,LATHE_2
+at 2021-09-24 16:01:47.524704 Received message: /pathResponses -> AGENT_1,KR16,KR16/LATHE_2/KR16
+at 2021-09-24 16:01:48.908982 Received message: /partAgentLogging -> AGENT_5,LINEAR_CONVEYOR
+at 2021-09-24 16:01:49.457515 Received message: /partAgentLogging -> AGENT_3,KR10
+at 2021-09-24 16:01:49.725309 Received message: /pathRequests -> AGENT_3,KR10,EXIT_PLATFORM_1
+at 2021-09-24 16:01:49.991756 Received message: /pathResponses -> AGENT_3,KR10,KR10/EXIT_PLATFORM_1/KR10
+at 2021-09-24 16:01:50.076529 Received message: /partAgentLogging -> AGENT_1,LATHE_2
+at 2021-09-24 16:01:52.469369 Received message: /partAgentLogging -> AGENT_3,EXIT_PLATFORM_1
+at 2021-09-24 16:01:52.741642 Received message: /partAgentLogging -> AGENT_3,END
+at 2021-09-24 16:01:53.025721 Received message: /pathRequests -> AGENT_4,LINEAR_CONVEYOR,LATHE_2
+at 2021-09-24 16:01:53.241183 Received message: /pathRequests -> AGENT_1,LATHE_2,EXIT_PLATFORM_1
+at 2021-09-24 16:01:53.292046 Received message: /pathResponses -> AGENT_4,LINEAR_CONVEYOR,LINEAR_CONVEYOR/KR16/LATHE_2/KR16
+at 2021-09-24 16:01:53.559373 Received message: /pathResponses -> AGENT_1,LATHE_2,LATHE_2/KR16/CIRCULAR_CONVEYOR/KR10/EXIT_PLATFORM_1/KR16
+at 2021-09-24 16:01:56.036941 Received message: /partAgentLogging -> AGENT_1,KR16
+at 2021-09-24 16:01:56.174592 Received message: /pathRequests -> AGENT_1,KR16,EXIT_PLATFORM_1
+at 2021-09-24 16:01:56.440870 Received message: /pathResponses -> AGENT_1,KR16,KR16/CIRCULAR_CONVEYOR/KR10/EXIT_PLATFORM_1/KR16
+at 2021-09-24 16:01:57.354630 Received message: /pathRequests -> AGENT_5,LINEAR_CONVEYOR,LATHE_3
+at 2021-09-24 16:01:57.627898 Received message: /pathResponses -> AGENT_5,LINEAR_CONVEYOR,LINEAR_CONVEYOR/KR16/CIRCULAR_CONVEYOR/KR10/LATHE_3/KR16
+at 2021-09-24 16:01:58.872904 Received message: /partAgentLogging -> AGENT_1,CIRCULAR_CONVEYOR
+at 2021-09-24 16:01:59.141189 Received message: /pathRequests -> AGENT_1,CIRCULAR_CONVEYOR,EXIT_PLATFORM_1
+at 2021-09-24 16:01:59.409046 Received message: /pathResponses -> AGENT_1,CIRCULAR_CONVEYOR,CIRCULAR_CONVEYOR/KR10/EXIT_PLATFORM_1/KR10
+at 2021-09-24 16:02:01.905689 Received message: /partAgentLogging -> AGENT_1,KR10
+at 2021-09-24 16:02:02.126098 Received message: /pathRequests -> AGENT_2,LINEAR_CONVEYOR,LATHE_1
+at 2021-09-24 16:02:02.172972 Received message: /pathRequests -> AGENT_1,KR10,EXIT_PLATFORM_1
+at 2021-09-24 16:02:02.396375 Received message: /pathResponses -> AGENT_2,LINEAR_CONVEYOR,LINEAR_CONVEYOR/KR16/CIRCULAR_CONVEYOR/KR10/LATHE_1/KR16
+at 2021-09-24 16:02:02.663696 Received message: /pathResponses -> AGENT_1,KR10,KR10/EXIT_PLATFORM_1/KR10
+at 2021-09-24 16:02:04.886614 Received message: /partAgentLogging -> AGENT_2,KR16
+at 2021-09-24 16:02:05.154515 Received message: /pathRequests -> AGENT_2,KR16,LATHE_1
+at 2021-09-24 16:02:05.199670 Received message: /partAgentLogging -> AGENT_1,EXIT_PLATFORM_1
+at 2021-09-24 16:02:05.420905 Received message: /partAgentLogging -> AGENT_1,END
+at 2021-09-24 16:02:05.424895 Received message: /pathResponses -> AGENT_2,KR16,KR16/CIRCULAR_CONVEYOR/KR10/LATHE_1/KR16
+at 2021-09-24 16:02:06.495236 Received message: /partAgentLogging -> AGENT_6,LINEAR_CONVEYOR
+at 2021-09-24 16:02:07.904342 Received message: /partAgentLogging -> AGENT_2,CIRCULAR_CONVEYOR
+at 2021-09-24 16:02:08.174143 Received message: /pathRequests -> AGENT_2,CIRCULAR_CONVEYOR,LATHE_1
+at 2021-09-24 16:02:08.439144 Received message: /pathResponses -> AGENT_2,CIRCULAR_CONVEYOR,CIRCULAR_CONVEYOR/KR10/LATHE_1/KR10
+at 2021-09-24 16:02:08.661549 Received message: /pathRequests -> AGENT_4,LINEAR_CONVEYOR,LATHE_2
+at 2021-09-24 16:02:08.927837 Received message: /pathResponses -> AGENT_4,LINEAR_CONVEYOR,LINEAR_CONVEYOR/KR16/LATHE_2/KR16
+at 2021-09-24 16:02:10.998915 Received message: /partAgentLogging -> AGENT_2,KR10
+at 2021-09-24 16:02:11.266316 Received message: /pathRequests -> AGENT_2,KR10,LATHE_1
+at 2021-09-24 16:02:11.392945 Received message: /partAgentLogging -> AGENT_4,KR16
+at 2021-09-24 16:02:11.531995 Received message: /pathResponses -> AGENT_2,KR10,KR10/LATHE_1/KR10
+at 2021-09-24 16:02:11.536982 Received message: /pathRequests -> AGENT_4,KR16,LATHE_2
+at 2021-09-24 16:02:11.804558 Received message: /pathResponses -> AGENT_4,KR16,KR16/LATHE_2/KR16
+at 2021-09-24 16:02:12.955850 Received message: /pathRequests -> AGENT_5,LINEAR_CONVEYOR,LATHE_3
+at 2021-09-24 16:02:13.223959 Received message: /pathResponses -> AGENT_5,LINEAR_CONVEYOR,LINEAR_CONVEYOR/KR16/CIRCULAR_CONVEYOR/KR10/LATHE_3/KR16
+at 2021-09-24 16:02:14.055380 Received message: /partAgentLogging -> AGENT_2,LATHE_1
+at 2021-09-24 16:02:14.284766 Received message: /partAgentLogging -> AGENT_4,LATHE_2
+at 2021-09-24 16:02:17.228965 Received message: /pathRequests -> AGENT_6,LINEAR_CONVEYOR,LATHE_1
+at 2021-09-24 16:02:17.230960 Received message: /pathRequests -> AGENT_2,LATHE_1,EXIT_PLATFORM_1
+at 2021-09-24 16:02:17.453922 Received message: /pathRequests -> AGENT_4,LATHE_2,EXIT_PLATFORM_1
+at 2021-09-24 16:02:17.495809 Received message: /pathResponses -> AGENT_6,LINEAR_CONVEYOR,LINEAR_CONVEYOR/KR16/CIRCULAR_CONVEYOR/KR10/LATHE_1/KR16
+at 2021-09-24 16:02:17.720182 Received message: /pathResponses -> AGENT_2,LATHE_1,LATHE_1/KR10/EXIT_PLATFORM_1/KR10
+at 2021-09-24 16:02:17.761094 Received message: /pathResponses -> AGENT_4,LATHE_2,LATHE_2/KR16/CIRCULAR_CONVEYOR/KR10/EXIT_PLATFORM_1/KR16
+at 2021-09-24 16:02:20.330643 Received message: /partAgentLogging -> AGENT_2,KR10
+at 2021-09-24 16:02:20.447333 Received message: /partAgentLogging -> AGENT_4,KR16
+at 2021-09-24 16:02:20.449326 Received message: /pathRequests -> AGENT_2,KR10,EXIT_PLATFORM_1
+at 2021-09-24 16:02:20.603913 Received message: /pathRequests -> AGENT_4,KR16,EXIT_PLATFORM_1
+at 2021-09-24 16:02:20.716612 Received message: /pathResponses -> AGENT_2,KR10,KR10/EXIT_PLATFORM_1/KR10
+at 2021-09-24 16:02:20.991910 Received message: /pathResponses -> AGENT_4,KR16,KR16/CIRCULAR_CONVEYOR/KR10/EXIT_PLATFORM_1/KR16
+at 2021-09-24 16:02:23.214344 Received message: /partAgentLogging -> AGENT_2,EXIT_PLATFORM_1
+at 2021-09-24 16:02:23.445013 Received message: /partAgentLogging -> AGENT_2,END
+at 2021-09-24 16:02:23.446014 Received message: /partAgentLogging -> AGENT_4,CIRCULAR_CONVEYOR
+at 2021-09-24 16:02:23.481918 Received message: /pathRequests -> AGENT_4,CIRCULAR_CONVEYOR,EXIT_PLATFORM_1
+at 2021-09-24 16:02:23.748204 Received message: /pathResponses -> AGENT_4,CIRCULAR_CONVEYOR,CIRCULAR_CONVEYOR/KR10/EXIT_PLATFORM_1/KR10
+at 2021-09-24 16:02:26.302161 Received message: /partAgentLogging -> AGENT_4,KR10
+at 2021-09-24 16:02:26.577935 Received message: /pathRequests -> AGENT_4,KR10,EXIT_PLATFORM_1
+at 2021-09-24 16:02:26.852197 Received message: /pathResponses -> AGENT_4,KR10,KR10/EXIT_PLATFORM_1/KR10
+at 2021-09-24 16:02:28.703066 Received message: /pathRequests -> AGENT_5,LINEAR_CONVEYOR,LATHE_3
+at 2021-09-24 16:02:28.971349 Received message: /pathResponses -> AGENT_5,LINEAR_CONVEYOR,LINEAR_CONVEYOR/KR16/CIRCULAR_CONVEYOR/KR10/LATHE_3/KR16
+at 2021-09-24 16:02:29.364351 Received message: /partAgentLogging -> AGENT_4,EXIT_PLATFORM_1
+at 2021-09-24 16:02:29.508247 Received message: /partAgentLogging -> AGENT_4,END
+at 2021-09-24 16:02:31.419208 Received message: /partAgentLogging -> AGENT_5,KR16
+at 2021-09-24 16:02:31.686493 Received message: /pathRequests -> AGENT_5,KR16,LATHE_3
+at 2021-09-24 16:02:31.955772 Received message: /pathResponses -> AGENT_5,KR16,KR16/CIRCULAR_CONVEYOR/KR10/LATHE_3/KR16
+at 2021-09-24 16:02:32.924231 Received message: /pathRequests -> AGENT_6,LINEAR_CONVEYOR,LATHE_1
+at 2021-09-24 16:02:33.203328 Received message: /pathResponses -> AGENT_6,LINEAR_CONVEYOR,LINEAR_CONVEYOR/KR16/CIRCULAR_CONVEYOR/KR10/LATHE_1/KR16
+at 2021-09-24 16:02:34.478473 Received message: /partAgentLogging -> AGENT_5,CIRCULAR_CONVEYOR
+at 2021-09-24 16:02:34.745812 Received message: /pathRequests -> AGENT_5,CIRCULAR_CONVEYOR,LATHE_3
+at 2021-09-24 16:02:35.011654 Received message: /pathResponses -> AGENT_5,CIRCULAR_CONVEYOR,CIRCULAR_CONVEYOR/KR10/LATHE_3/KR10
+at 2021-09-24 16:02:37.474322 Received message: /partAgentLogging -> AGENT_5,KR10
+at 2021-09-24 16:02:37.742572 Received message: /pathRequests -> AGENT_5,KR10,LATHE_3
+at 2021-09-24 16:02:38.143517 Received message: /pathResponses -> AGENT_5,KR10,KR10/LATHE_3/KR10
+at 2021-09-24 16:02:40.627332 Received message: /partAgentLogging -> AGENT_5,LATHE_3
+at 2021-09-24 16:02:44.098735 Received message: /pathRequests -> AGENT_5,LATHE_3,EXIT_PLATFORM_1
+at 2021-09-24 16:02:44.365023 Received message: /pathResponses -> AGENT_5,LATHE_3,LATHE_3/KR10/EXIT_PLATFORM_1/KR10
+at 2021-09-24 16:02:46.871187 Received message: /partAgentLogging -> AGENT_5,KR10
+at 2021-09-24 16:02:47.138103 Received message: /pathRequests -> AGENT_5,KR10,EXIT_PLATFORM_1
+at 2021-09-24 16:02:47.403902 Received message: /pathResponses -> AGENT_5,KR10,KR10/EXIT_PLATFORM_1/KR10
+at 2021-09-24 16:02:48.596350 Received message: /pathRequests -> AGENT_6,LINEAR_CONVEYOR,LATHE_1
+at 2021-09-24 16:02:48.863678 Received message: /pathResponses -> AGENT_6,LINEAR_CONVEYOR,LINEAR_CONVEYOR/KR16/CIRCULAR_CONVEYOR/KR10/LATHE_1/KR16
+at 2021-09-24 16:02:49.910930 Received message: /partAgentLogging -> AGENT_5,EXIT_PLATFORM_1
+at 2021-09-24 16:02:50.178247 Received message: /partAgentLogging -> AGENT_5,END
+at 2021-09-24 16:02:51.345787 Received message: /partAgentLogging -> AGENT_6,KR16
+at 2021-09-24 16:02:51.613104 Received message: /pathRequests -> AGENT_6,KR16,LATHE_1
+at 2021-09-24 16:02:51.881020 Received message: /pathResponses -> AGENT_6,KR16,KR16/CIRCULAR_CONVEYOR/KR10/LATHE_1/KR16
+at 2021-09-24 16:02:54.349032 Received message: /partAgentLogging -> AGENT_6,CIRCULAR_CONVEYOR
+at 2021-09-24 16:02:54.616317 Received message: /pathRequests -> AGENT_6,CIRCULAR_CONVEYOR,LATHE_1
+at 2021-09-24 16:02:54.883600 Received message: /pathResponses -> AGENT_6,CIRCULAR_CONVEYOR,CIRCULAR_CONVEYOR/KR10/LATHE_1/KR10
+at 2021-09-24 16:02:57.372939 Received message: /partAgentLogging -> AGENT_6,KR10
+at 2021-09-24 16:02:57.644213 Received message: /pathRequests -> AGENT_6,KR10,LATHE_1
+at 2021-09-24 16:02:57.911503 Received message: /pathResponses -> AGENT_6,KR10,KR10/LATHE_1/KR10
+at 2021-09-24 16:03:00.629415 Received message: /partAgentLogging -> AGENT_6,LATHE_1
+at 2021-09-24 16:03:04.141015 Received message: /pathRequests -> AGENT_6,LATHE_1,EXIT_PLATFORM_1
+at 2021-09-24 16:03:04.407302 Received message: /pathResponses -> AGENT_6,LATHE_1,LATHE_1/KR10/EXIT_PLATFORM_1/KR10
+at 2021-09-24 16:03:06.952912 Received message: /partAgentLogging -> AGENT_6,KR10
+at 2021-09-24 16:03:07.220198 Received message: /pathRequests -> AGENT_6,KR10,EXIT_PLATFORM_1
+at 2021-09-24 16:03:07.488489 Received message: /pathResponses -> AGENT_6,KR10,KR10/EXIT_PLATFORM_1/KR10
+at 2021-09-24 16:03:09.965127 Received message: /partAgentLogging -> AGENT_6,EXIT_PLATFORM_1
+at 2021-09-24 16:03:10.232904 Received message: /partAgentLogging -> AGENT_6,END
