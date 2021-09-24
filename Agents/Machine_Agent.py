@@ -1,4 +1,6 @@
 import sys
+
+from paho.mqtt.client import Client
 sys.path.append(r'C:\Users\sahil\Documents\Part 4\Mecheng 700\Code Base\P4P')
 sys.path.append(r'C:\Users\drago\OneDrive\Documents\GitHub\P4P')
 from MultiAgent import smartServer
@@ -19,6 +21,7 @@ confirmationRecieved = False
 operationRequest = False
 speed = 100
 chosenPart = ("",0)
+partInMachine = "none"
 
 machineName = "LATHE"
 
@@ -29,6 +32,7 @@ def reset():
     global confirmationRecieved
     global operationRequest
     global chosenPart
+    
 
     machineBooked = False
     partBids = []
@@ -46,6 +50,7 @@ def msg_func(client,userdata,msg):
     global operationRequest
     global chosenPart
     global confirmationRecieved
+    global partInMachine
 
     msg_decoded = msg.payload.decode("utf-8")
     # print("Received message: " + msg.topic + " -> " + msg_decoded)
@@ -88,6 +93,17 @@ def msg_func(client,userdata,msg):
         if(msg_decoded == agent.name):
             agent.client.publish("/isResourceAvailable",agent.name + ",YES")
 
+    if(msg.topic == "/partAgentLogging"):
+        if(partInMachine == "none"):
+            if(msg_split[1] == machineName):
+                partInMachine = msg_split[0]
+        else:
+            if(msg_split[0] == partInMachine):
+                if(msg_split[1] != machineName):
+                    partInMachine = "none"
+
+
+
     
 
         
@@ -104,6 +120,7 @@ latheAgent.client.subscribe("/keepAlivePings")
 latheAgent.client.subscribe("/activeResources")
 latheAgent.client.subscribe("/cancellation")
 latheAgent.client.subscribe("/isResourceAvailable")
+latheAgent.client.subscribe("/partAgentLogging")
 latheAgent.client.on_message = msg_func
 
 #adding to graph agent
@@ -114,19 +131,23 @@ while True:
 
     if(not machineBooked):
         if(acceptingBids):
-            #If machine is accepting bids and hasnt been booked
-            print("Accepting Bids")
-            prevTime = time.time()
-            currentTime = prevTime
-            while(currentTime - prevTime < 5):
-                currentTime = time.time()
-                latheAgent.client.loop(0.1)
+            if(partInMachine != "none"):
+                pass
             
-            if(len(partBids) != 0):
-                print("Bids recieved!")
-                acceptingBids = False
             else:
-                print("No bids recieved")
+            #If machine is accepting bids and hasnt been booked
+                print("Accepting Bids")
+                prevTime = time.time()
+                currentTime = prevTime
+                while(currentTime - prevTime < 5):
+                    currentTime = time.time()
+                    latheAgent.client.loop(0.1)
+                
+                if(len(partBids) != 0):
+                    print("Bids recieved!")
+                    acceptingBids = False
+                else:
+                    print("No bids recieved")
 
         else:
             #If machine has recieved a list of bids
