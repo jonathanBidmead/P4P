@@ -109,8 +109,15 @@ latheAgent.client.on_message = msg_func
 #adding to graph agent
 latheAgent.client.publish("/activeResources","ADD" + "," + machineName + ",MACHINE,5 -4,KR10")
 
+#DEBUG: SELD DESTRUCT
+initialTime = time.time()
+
 while True:
     latheAgent.client.loop(0.1)
+
+    #DEBUG: SELF DESTRUCT
+    # if (time.time() - initialTime > 10):
+    #     break
 
     if(not machineBooked):
         if(acceptingBids):
@@ -136,7 +143,9 @@ while True:
             latheAgent.client.publish("/machineBids",machineName + "," + str(speed) + "," + chosenPart[0]) #Decide msg pattern
             prevTime = time.time()
             currentTime = prevTime
-            while(currentTime - prevTime < 15): #Needs to be longer than the part agent wait time
+            while(currentTime - prevTime < 10):
+                if(confirmationRecieved):
+                    break 
                 currentTime = time.time()
                 latheAgent.client.loop(0.1)
             if(confirmationRecieved == True):

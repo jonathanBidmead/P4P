@@ -46,7 +46,7 @@ startMoveBetweenNodes = method[3]
 #things to change when making different movement agents
 name = "KR10"
 guiLocation = "5 2"
-initialAdjacents = "CIRCULAR_CONVEYOR LATHE_1 LATHE_3 EXIT_BUFFER"
+initialAdjacents = "CIRCULAR_CONVEYOR LATHE_1 LATHE_3 EXIT_PLATFORM_1"
 
 #creating server instance
 movementAgent = smartServer.smartMqtt(name)
@@ -54,6 +54,9 @@ movementAgent = smartServer.smartMqtt(name)
 #internal variables for start and end resources of this movement
 startAgent = ""
 endAgent = ""
+
+#internal variable to stop fuckups with multiple transport agents
+iPublishedThis = False
 
 #creating/subscribing to pertinent mqtt topics
 movementAgent.client.subscribe("/activeResources")
@@ -67,6 +70,8 @@ initialAdjacents = initialAdjacents + " " + name
 def msg_func(client,userdata,msg):
     global startAgent
     global endAgent
+    global iPublishedThis
+    global currentPartAgent
     msg_decoded = msg.payload.decode("utf-8")
 
     #pinging response (copy paste this to other servers)
@@ -83,8 +88,10 @@ def msg_func(client,userdata,msg):
             endAgent = tempData[3]
             if(startAgent in adjacentList and endAgent in adjacentList and not busy):#if part agent current node and target node both adjacent to this movement agent & this agent isn't currently busy
                 
-                global currentPartAgent
+                
                 currentPartAgent = tempData[0]
+                
+                iPublishedThis = True
                 #checking if the first resource agent is available currently
                 if(startAgent == movementAgent.name):
                     movementAgent.client.publish("/isResourceAvailable",endAgent)
@@ -96,19 +103,23 @@ def msg_func(client,userdata,msg):
                 endAgent = ""
 
     if(msg.topic == "/isResourceAvailable"):
+        # global iPublishedThis
         tempData = msg_decoded.split(",")
         #
-        if(len(tempData) == 2 and tempData[0] == startAgent and tempData[0] != movementAgent.name):
-            movementAgent.client.publish("/movement",currentPartAgent + "," + movementAgent.name + "," + "BGN")
-            startMovement(startAgent,endAgent)
-        if(len(tempData) == 2 and tempData[0] == endAgent and tempData[0] != movementAgent.name):
-            movementAgent.client.publish("/movement",currentPartAgent + "," + movementAgent.name + "," + "BGN")
-            startMovement(startAgent,endAgent)
-        if(tempData == movementAgent.name):
-            movementAgent.client.publish("/isResourceActive",movementAgent.name + ",YES")
+        if(len(tempData) == 2 and iPublishedThis == True):
+            if(len(tempData) == 2 and tempData[0] == startAgent and tempData[0] != movementAgent.name):
+                movementAgent.client.publish("/movement",currentPartAgent + "," + movementAgent.name + "," + "BGN")
+                startMovement(startAgent,endAgent)
+            if(len(tempData) == 2 and tempData[0] == endAgent and tempData[0] != movementAgent.name):
+                movementAgent.client.publish("/movement",currentPartAgent + "," + movementAgent.name + "," + "BGN")
+                startMovement(startAgent,endAgent)
+            if(tempData == movementAgent.name):
+                movementAgent.client.publish("/isResourceActive",movementAgent.name + ",YES")
 
 #communicating with the opcua layer
 def startMovement(startNode,targetNode):
+    global iPublishedThis
+    iPublishedThis = False
     print(opcClient.objects.call_method(startMoveBetweenNodes,startNode,targetNode))
     return(opcClient.objects.call_method(startMoveBetweenNodes,startNode,targetNode))
     

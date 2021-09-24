@@ -55,7 +55,7 @@ def beginMove(parent,startPoint,endPoint):
 
 def move(startPoint,endPoint):
     print("Beginning movement from {} to {}".format(startPoint,endPoint))
-    time.sleep(15)
+    time.sleep(1)
     global move_start_flag
     move_start_flag = False
     print("Movement Complete")

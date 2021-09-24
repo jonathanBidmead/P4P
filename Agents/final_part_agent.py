@@ -80,7 +80,7 @@ def msg_func(client,userdata,msg):
 
     if(topic == "/machineBids"):
         if(state == States.acceptingBids):
-            if(msg_split[2] == agentName):
+            if(msg_split[2] == agentName and msg_split[0] != currentNode):
                 machineList.append((msg_split[0],float(msg_split[1])))
     
     if(topic == "/pathResponses"):
@@ -118,6 +118,7 @@ partAgent.client.subscribe("/pathResponses")
 partAgent.client.subscribe("/partAgentLogging")
 partAgent.client.subscribe("/cancellation")
 partAgent.client.subscribe("/partBooked")
+partAgent.client.subscribe("/debug")
 partAgent.client.on_message = msg_func
 
 #Jono addition: when part agent first initialises, print its location
@@ -133,6 +134,7 @@ while (len(taskList) != 0):
         print("Task done, removing from list")
         taskList.pop(0) #Remove the first task in the list
         taskDone = False
+        reset()
     
     else:
         if(len(machineList) == 0):
@@ -151,6 +153,7 @@ while (len(taskList) != 0):
             #------------------------------------------------------------------------
             print("Machine chosen, going to machine now...")
             machineList.sort(key = lambda x:x[1])
+            partAgent.client.publish("/debug",agentName + ":  " + str(machineList))
             state = States.findingPath #Doesn't matter what this is.
             chosenMachine = machineList[0]  #Based on machining time    
             partAgent.client.publish("/confirmation",agentName + "," + chosenMachine[0] + "," +  "You are chosen")
@@ -172,7 +175,7 @@ while (len(taskList) != 0):
                     partAgent.client.publish("/cancellation",agentName+ "," + chosenMachine[0])
                     break
                 else:
-                    print("path exists (GOOD TO SEE)")
+                    print("path exists")
                     movementMachine = targetPath[-1]
                     nextNode = targetPath[1]
                     state = States.followingPath
@@ -184,7 +187,7 @@ while (len(taskList) != 0):
                     prevTime = time.time()
                     currentTime = prevTime
 
-                    while(currentTime - prevTime < 5):
+                    while(currentTime - prevTime < 15):
                         if(movementStarted):
                             if(partStartedMovingFlag == False):
                                 partAgent.client.publish("/partBooked","Motion Started")
@@ -210,15 +213,18 @@ while (len(taskList) != 0):
                 state = States.atMachine
                 if("BUFFER" in currentNode): #Look into buffer naming
                     reset()
-                elif("OUTPUT" in currentNode): #If you end up in an output node
+                elif("EXIT" in currentNode): #If you end up in an output node
                     taskDone = True
                 else:
                     partAgent.client.publish("/machining",agentName + "," + currentNode + "," + currentTask)
                     while(not taskDone):
                         partAgent.client.loop(0.1)
 
-partAgent.client.publish("/partAgentLogging",partAgent.name + ",END")
 
+partAgent.client.publish("/partAgentLogging",partAgent.name + ",END")
+prevTime = time.time()
+while(time.time() - prevTime < 2):
+    partAgent.client.loop(0.1)
 
 
 

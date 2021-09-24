@@ -91,7 +91,7 @@ max_iters = 10000
 
 #number of seconds machines have to respond to a ping before being considered offline
 PINGING_TIMEOUT = 5#not used currently,. current implementation is to give each resource until the next ping happens to respond
-PING_FREQUENCY = 5
+PING_FREQUENCY = 10
 
 #breadth-first search through the graph to find a path
 def bfs(start, end):

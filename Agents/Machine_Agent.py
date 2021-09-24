@@ -136,7 +136,9 @@ while True:
             latheAgent.client.publish("/machineBids",machineName + "," + str(speed) + "," + chosenPart[0]) #Decide msg pattern
             prevTime = time.time()
             currentTime = prevTime
-            while(currentTime - prevTime < 15): #Needs to be longer than the part agent wait time
+            while(currentTime - prevTime < 10): #Needs to be longer than the part agent wait time
+                if(confirmationRecieved):
+                    break
                 currentTime = time.time()
                 latheAgent.client.loop(0.1)
             if(confirmationRecieved == True):

@@ -5,9 +5,17 @@ sys.path.append(r'C:\Users\sahil\Documents\Part 4\Mecheng 700\Code Base\P4P')
 sys.path.append(r'C:\Users\drago\OneDrive\Documents\GitHub\P4P')
 from MultiAgent import smartServer
 import datetime
+import time
+
 #creating graph agent instance
 agent = smartServer.smartMqtt("BUFFER_1")#CHANGE
 score = 10000
+
+currentTime = 0
+prevTime = 0
+
+part_list = []
+acceptingBids = True
 
 #creating/subscribing to pertinent mqtt topics
 agent.client.subscribe("/activeResources")
@@ -15,8 +23,10 @@ agent.client.subscribe("/pathRequests")
 agent.client.subscribe("/keepAlivePings")
 agent.client.subscribe("/isResourceAvailable")
 agent.client.subscribe("/partBids")
+agent.client.subscribe("/machineBids")
 
 def msg_func(client,userdata,msg):
+    global acceptingBids
     msg_decoded = msg.payload.decode("utf-8")
     print("Received message: " + msg.topic + " -> " + msg_decoded)
     msg_split = msg_decoded.split(",")
@@ -33,15 +43,38 @@ def msg_func(client,userdata,msg):
         if(tempData == agent.name):
             agent.client.publish("/isResourceAvailable",agent.name + ",YES")
 
-    if(msg.topic == "/partBids"):
-        agent.client.publish("/machineBids",agent.name + "," + str(score) + "," + msg_split[0])
-
+    if(msg.topic == "/partBids" and acceptingBids):
+        part_list.append((msg_split[0],float(msg_split[1])))
+    
 
 #defining msg_func (shortening variable names)
 agent.client.on_message = msg_func
 
 #add self to graph
-agent.client.publish("/activeResources","ADD,BUFFER1,BUFFER,-5 6,KR16")#CHANGE
+agent.client.publish("/activeResources","ADD,BUFFER_1,BUFFER,-5 6,KR16")#CHANGE
 
 while True:
     agent.client.loop(0.1)
+
+    if(len(part_list) == 0):
+        prevTime = time.time()
+        currentTime = prevTime
+        while(currentTime - prevTime < 1):
+            agent.client.loop(0.1)
+    else:
+        print("yo2")
+        acceptingBids = False
+        part_list.sort(key = lambda x:x[1],reverse = True)
+        agent.client.publish("/machineBids",agent.name + "," + str(score) + "," + part_list[0])
+        prevTime = time.time()
+        currentTime = prevTime
+        while(currentTime - prevTime < 10):
+            agent.client.loop(0.1)
+        part_list = []
+        acceptingBids = True
+
+
+
+
+
+    
