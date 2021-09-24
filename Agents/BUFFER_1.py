@@ -60,15 +60,16 @@ while True:
         prevTime = time.time()
         currentTime = prevTime
         while(currentTime - prevTime < 1):
+            currentTime = time.time()
             agent.client.loop(0.1)
     else:
-        print("yo2")
         acceptingBids = False
         part_list.sort(key = lambda x:x[1],reverse = True)
-        agent.client.publish("/machineBids",agent.name + "," + str(score) + "," + part_list[0])
+        agent.client.publish("/machineBids",agent.name + "," + str(score) + "," + part_list[0][0])
         prevTime = time.time()
         currentTime = prevTime
         while(currentTime - prevTime < 10):
+            currentTime = time.time()
             agent.client.loop(0.1)
         part_list = []
         acceptingBids = True
