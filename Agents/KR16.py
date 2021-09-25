@@ -46,7 +46,7 @@ startMoveBetweenNodes = method[3]
 #things to #CHANGE when making different movement agents
 name = "KR16"
 guiLocation = "-5 2"
-initialAdjacents = "CIRCULAR_CONVEYOR LINEAR_CONVEYOR BUFFER_1 LATHE_2"
+initialAdjacents = "CIRCULAR_CONVEYOR LINEAR_CONVEYOR BUFFER_1"
 
 #creating server instance
 movementAgent = smartServer.smartMqtt(name)
@@ -83,27 +83,32 @@ def msg_func(client,userdata,msg):
     
     if(msg.topic == "/movement"):
         tempData = msg_decoded.split(",")
-        if(tempData[1] == movementAgent.name and tempData[2] != "BGN" and tempData[2] != "END"):#only respond if the part agent requested this agent specifically
+        if(endMoveFull and currentPartAgent != tempData[0]):#if the previous move left the transport agent holding a part, only accept new requests from that part's agent 
+            print ("skipped request from: " + tempData[0])
+            pass
+        elif(tempData[1] == movementAgent.name and tempData[2] != "BGN" and tempData[2] != "END" and not busy):#only respond if the part agent requested this agent specifically
             adjacentList = initialAdjacents.split(" ")
             startAgent = tempData[2]
             endAgent = tempData[3]
+            print("this transport agent has been requested")
             if(startAgent in adjacentList and endAgent in adjacentList and not busy):#if part agent current node and target node both adjacent to this movement agent & this agent isn't currently busy
                      
-                if(endMoveFull and currentPartAgent != tempData[0]):#if the previous move left the transport agent holding a part, only accept new requests from that part's agent 
-                    pass
-                else:
-                    currentPartAgent = tempData[0]
-                    
-                    iPublishedThis = True
-                    #checking if the first resource agent is available currently
-                    if(startAgent == movementAgent.name):
-                        movementAgent.client.publish("/isResourceAvailable",endAgent)
-                    if(endAgent == movementAgent.name):
-                        movementAgent.client.publish("/isResourceAvailable",startAgent)
+                
+                
+                currentPartAgent = tempData[0]
+                print("accepted movement")
+                movementAgent.client.publish("/movement",currentPartAgent + "," + movementAgent.name + "," + "BGN")
+                iPublishedThis = True
+                #checking if the first resource agent is available currently
+                if(startAgent == movementAgent.name):
+                    movementAgent.client.publish("/isResourceAvailable",endAgent)
+                if(endAgent == movementAgent.name):
+                    movementAgent.client.publish("/isResourceAvailable",startAgent)
 
             else:# if the movement was not accepted, clear these variables
                 startAgent = ""
                 endAgent = ""
+                print("resetting agents")
 
     if(msg.topic == "/isResourceAvailable"):
         # global iPublishedThis
@@ -111,10 +116,10 @@ def msg_func(client,userdata,msg):
         #
         if(len(tempData) == 2 and iPublishedThis == True):
             if(len(tempData) == 2 and tempData[0] == startAgent and tempData[0] != movementAgent.name):
-                movementAgent.client.publish("/movement",currentPartAgent + "," + movementAgent.name + "," + "BGN")
+                # movementAgent.client.publish("/movement",currentPartAgent + "," + movementAgent.name + "," + "BGN")
                 startMovement(startAgent,endAgent)
             if(len(tempData) == 2 and tempData[0] == endAgent and tempData[0] != movementAgent.name):
-                movementAgent.client.publish("/movement",currentPartAgent + "," + movementAgent.name + "," + "BGN")
+                # movementAgent.client.publish("/movement",currentPartAgent + "," + movementAgent.name + "," + "BGN")
                 startMovement(startAgent,endAgent)
             if(tempData == movementAgent.name):
                 movementAgent.client.publish("/isResourceActive",movementAgent.name + ",YES")
@@ -129,8 +134,9 @@ def startMovement(startNode,targetNode):
         endMoveFull = True
     else:
         endMoveFull = False
-    print(opcClient.objects.call_method(startMoveBetweenNodes,startNode,targetNode))
-    return(opcClient.objects.call_method(startMoveBetweenNodes,startNode,targetNode))
+    doofus = opcClient.objects.call_method(startMoveBetweenNodes,startNode,targetNode)
+    print(doofus)
+    return doofus
     
 
 

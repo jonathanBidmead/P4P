@@ -12,8 +12,8 @@ import datetime
 #opcua imports and stuff
 from opcua import Client
 url = "localhost"
-port = 7003
-name = "KR10_CLIENT"
+port = 7005#CHANGE
+name = "KR16_CLIENT"#CHANGE
 end_point = "opc.tcp://{}:{}".format(url, port)
 opcClient = smartServer.smartOpcua(url,port,name,"client")
 opcClient.client.connect()
@@ -43,10 +43,10 @@ startMoveBetweenNodes = method[3]
 
 
 
-#things to change when making different movement agents
-name = "KR10"
-guiLocation = "5 2"
-initialAdjacents = "CIRCULAR_CONVEYOR LATHE_1 LATHE_3 EXIT_PLATFORM_1"
+#things to #CHANGE when making different movement agents
+name = "KR16_2"
+guiLocation = "-5 -1"
+initialAdjacents = "CIRCULAR_CONVEYOR LINEAR_CONVEYOR LATHE_2"
 
 #creating server instance
 movementAgent = smartServer.smartMqtt(name)
@@ -84,19 +84,16 @@ def msg_func(client,userdata,msg):
     if(msg.topic == "/movement"):
         tempData = msg_decoded.split(",")
         if(endMoveFull and currentPartAgent != tempData[0]):#if the previous move left the transport agent holding a part, only accept new requests from that part's agent 
-            print ("skipped request from: " + tempData[0])
             pass
         elif(tempData[1] == movementAgent.name and tempData[2] != "BGN" and tempData[2] != "END" and not busy):#only respond if the part agent requested this agent specifically
             adjacentList = initialAdjacents.split(" ")
             startAgent = tempData[2]
             endAgent = tempData[3]
-            print("this transport agent has been requested")
             if(startAgent in adjacentList and endAgent in adjacentList and not busy):#if part agent current node and target node both adjacent to this movement agent & this agent isn't currently busy
-                print("not busy")
+                     
                 
-            
+                
                 currentPartAgent = tempData[0]
-                print("accepted movement")
                 movementAgent.client.publish("/movement",currentPartAgent + "," + movementAgent.name + "," + "BGN")
                 iPublishedThis = True
                 #checking if the first resource agent is available currently
@@ -108,7 +105,6 @@ def msg_func(client,userdata,msg):
             else:# if the movement was not accepted, clear these variables
                 startAgent = ""
                 endAgent = ""
-                print("resetting nodes")
 
     if(msg.topic == "/isResourceAvailable"):
         # global iPublishedThis
@@ -128,15 +124,12 @@ def msg_func(client,userdata,msg):
 def startMovement(startNode,targetNode):
     global iPublishedThis
     global endMoveFull
-    global currentPartAgent
     iPublishedThis = False
     
     if (targetNode == movementAgent.name):
         endMoveFull = True
-        print("Just began a movement ending with me holding " + currentPartAgent)
     else:
         endMoveFull = False
-        print("Just began a movement releasing " +  currentPartAgent)
     doofus = opcClient.objects.call_method(startMoveBetweenNodes,startNode,targetNode)
     print(doofus)
     return doofus
@@ -151,10 +144,9 @@ while True:
     movementAgent.client.loop(0.1)
 
     busy = method[2].get_data_value().Value.Value
-
-
+        
     #movement completed
-    if(not busy and currentlyMoving ):
+    if(not busy and currentlyMoving):
         movementAgent.client.publish("/movement",currentPartAgent + "," + movementAgent.name + ",END")
         # currentPartAgent = ""
         currentlyMoving = False
@@ -162,7 +154,6 @@ while True:
 
     if(busy and not currentlyMoving):
         currentlyMoving = True
-
     #DEBUG
     # time.sleep(2)
     # print("sending command")

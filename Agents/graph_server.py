@@ -19,7 +19,7 @@ graphAgent.client.subscribe("/activeResources")
 graphAgent.client.subscribe("/pathRequests")
 graphAgent.client.subscribe("/keepAlivePings")
 graphAgent.client.subscribe("/graphLogging")
-
+graphAgent.client.subscribe("/debug")
 #creating graph describing the layout of all resources
 layout_graph = dict()
 #dictionary for types of all resources
@@ -48,6 +48,7 @@ def msg_func(client,userdata,msg):
             if(tempData[1] not in layout_graph.keys() and tempData[1] not in offlineAgents.keys()):#only add a new node if it doesn't already exist
                 add_node(tempData[1],tempData[4].split(),tempData[2],tempData[3])
                 newAgents.append(tempData[1])
+            graphAgent.client.publish("/debug",str(layout_graph))
 
     if(msg.topic == "/pathRequests"):
         tempData = msg_decoded.split(",")
@@ -91,7 +92,7 @@ max_iters = 10000
 
 #number of seconds machines have to respond to a ping before being considered offline
 PINGING_TIMEOUT = 5#not used currently,. current implementation is to give each resource until the next ping happens to respond
-PING_FREQUENCY = 10
+PING_FREQUENCY = 3
 
 #breadth-first search through the graph to find a path
 def bfs(start, end):

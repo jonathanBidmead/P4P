@@ -32,7 +32,7 @@ def msg_func(client,userdata,msg):
         for i in range(0,int(quantity)):
             order_list.append(("AGENT_" + str(agentNumber),task_list,msg_split[2]))
             agentNumber += 1
-            order_list.sort(key=lambda x:x[2],reverse=True)
+            order_list.sort(key=lambda x:x[2])
     
     if(msg.topic == "/partBooked"):
         agentsInitialised -= 1

@@ -187,7 +187,7 @@ while (len(taskList) != 0):
                     prevTime = time.time()
                     currentTime = prevTime
 
-                    while(currentTime - prevTime < 15):
+                    while(currentTime - prevTime < 3):
                         if(movementStarted):
                             if(partStartedMovingFlag == False):
                                 partAgent.client.publish("/partBooked","Motion Started")
