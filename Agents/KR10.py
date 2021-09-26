@@ -46,7 +46,7 @@ startMoveBetweenNodes = method[3]
 #things to change when making different movement agents
 name = "KR10"
 guiLocation = "5 2"
-initialAdjacents = "CIRCULAR_CONVEYOR LATHE_1 LATHE_3 EXIT_PLATFORM_1"
+initialAdjacents = "CIRCULAR_CONVEYOR LATHE_1 LATHE_3 EXIT_PLATFORM_1 BUFFER_1"
 
 #creating server instance
 movementAgent = smartServer.smartMqtt(name)
@@ -58,6 +58,9 @@ endAgent = ""
 #internal variable to stop fuckups with multiple transport agents
 iPublishedThis = False
 endMoveFull = False
+
+#timeout variable
+publishTime = 0
 
 #creating/subscribing to pertinent mqtt topics
 movementAgent.client.subscribe("/activeResources")
@@ -73,6 +76,7 @@ def msg_func(client,userdata,msg):
     global endAgent
     global iPublishedThis
     global currentPartAgent
+    global publishTime
     msg_decoded = msg.payload.decode("utf-8")
 
     #pinging response (copy paste this to other servers)
@@ -93,12 +97,13 @@ def msg_func(client,userdata,msg):
             print("this transport agent has been requested")
             if(startAgent in adjacentList and endAgent in adjacentList and not busy):#if part agent current node and target node both adjacent to this movement agent & this agent isn't currently busy
                 print("not busy")
-                
+                #"busy" variable not updating fast enough leading to multiple requests reaching this point and overwriting eachother
             
                 currentPartAgent = tempData[0]
                 print("accepted movement")
                 movementAgent.client.publish("/movement",currentPartAgent + "," + movementAgent.name + "," + "BGN")
                 iPublishedThis = True
+                publishTime = time.time()
                 #checking if the first resource agent is available currently
                 if(startAgent == movementAgent.name):
                     movementAgent.client.publish("/isResourceAvailable",endAgent)
@@ -151,8 +156,12 @@ while True:
     movementAgent.client.loop(0.1)
 
     busy = method[2].get_data_value().Value.Value
+    if (iPublishedThis):
+        busy = True
 
-
+    if(iPublishedThis and time.time() - publishTime > 5):
+        iPublishedThis = False
+        busy = False
     #movement completed
     if(not busy and currentlyMoving ):
         movementAgent.client.publish("/movement",currentPartAgent + "," + movementAgent.name + ",END")

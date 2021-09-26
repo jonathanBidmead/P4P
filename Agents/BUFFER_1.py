@@ -51,7 +51,7 @@ def msg_func(client,userdata,msg):
 agent.client.on_message = msg_func
 
 #add self to graph
-agent.client.publish("/activeResources","ADD,BUFFER_1,BUFFER,-5 6,KR16")#CHANGE
+agent.client.publish("/activeResources","ADD,BUFFER_1,BUFFER,0 6,KR10")#CHANGE
 
 while True:
     agent.client.loop(0.1)

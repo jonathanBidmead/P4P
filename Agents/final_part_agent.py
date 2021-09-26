@@ -81,7 +81,12 @@ def msg_func(client,userdata,msg):
     if(topic == "/machineBids"):
         if(state == States.acceptingBids):
             if(msg_split[2] == agentName and msg_split[0] != currentNode):
-                machineList.append((msg_split[0],float(msg_split[1])))
+                if("BUFFER" in currentNode):
+                    if("BUFFER" not in msg_split[0]):
+                        machineList.append((msg_split[0],float(msg_split[1])))
+                else:
+                    machineList.append((msg_split[0],float(msg_split[1])))
+
     
     if(topic == "/pathResponses"):
         if(state == States.findingPath and msg_split[0] == agentName):

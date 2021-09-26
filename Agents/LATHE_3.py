@@ -121,9 +121,14 @@ latheAgent.client.on_message = msg_func
 
 #adding to graph agent
 latheAgent.client.publish("/activeResources","ADD" + "," + machineName + ",MACHINE,5 -4,KR10")
-
+#DEBUG: SELF DESTRUCT
+# initTime = time.time()
 while True:
     latheAgent.client.loop(0.1)
+    # #DEBUG: SELF DESTRUCT
+    # if (time.time() - initTime > 20):
+    #     print("b1")
+    #     break
 
     if(not machineBooked):
         if(acceptingBids):
@@ -136,6 +141,10 @@ while True:
                 while(currentTime - prevTime < 1):
                     currentTime = time.time()
                     latheAgent.client.loop(0.1)
+                    # #DEBUG: SELF DESTRUCT
+                    # if (time.time() - initTime > 20):
+                    #     print("b2")
+                    #     break
                 
                 if(len(partBids) != 0):
                     print("Bids recieved!")
@@ -146,12 +155,16 @@ while True:
         else:
             #If machine has recieved a list of bids
             print("Processing Bids")
-            partBids.sort(key = lambda x:x[1],reverse=True)
+            partBids.sort(key = lambda x:x[1])
             chosenPart = partBids[0]
             latheAgent.client.publish("/machineBids",machineName + "," + str(speed) + "," + chosenPart[0]) #Decide msg pattern
             prevTime = time.time()
             currentTime = prevTime
             while(currentTime - prevTime < 10):
+                # #DEBUG: SELF DESTRUCT
+                # if (time.time() - initTime > 20):
+                #     print("b3")
+                #     break
                 if(confirmationRecieved):
                     break
                 currentTime = time.time()

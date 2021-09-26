@@ -146,7 +146,7 @@ while True:
         else:
             #If machine has recieved a list of bids
             print("Processing Bids")
-            partBids.sort(key = lambda x:x[1],reverse=True)
+            partBids.sort(key = lambda x:x[1])
             chosenPart = partBids[0]
             latheAgent.client.publish("/machineBids",machineName + "," + str(speed) + "," + chosenPart[0]) #Decide msg pattern
             prevTime = time.time()

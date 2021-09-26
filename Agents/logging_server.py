@@ -1,4 +1,4 @@
-import sys
+import sys,os
 from typing import NewType
 sys.path.append(r'C:\Users\sahil\Documents\Part 4\Mecheng 700\Code Base\P4P')
 sys.path.append(r'C:\Users\drago\OneDrive\Documents\GitHub\P4P')
@@ -17,6 +17,8 @@ loggingAgent.client.subscribe("/pathRequests")
 loggingAgent.client.subscribe("/partAgentLogging")
 loggingAgent.client.subscribe("/pathResponses")
 loggingAgent.client.subscribe("/movement")
+loggingAgent.client.subscribe("/partBids")
+loggingAgent.client.subscribe("/machineBids")
 #for reference: what text files even exist?
 # agent_locations - All resource agent locations in the GUI
 # buffer_agents    - List of Resource Agent Associated Names that are Buffer Type
@@ -27,8 +29,12 @@ loggingAgent.client.subscribe("/movement")
 
 #if I receive a message from activeResources, what text file do I write that to?
 
+# save_path = r"C:\Users\drago\OneDrive\Documents\700P4P\Unity_Simulation\FirstAttempt\Assets"
+# file_name = "layout_graph.txt"
+# init_layout_graph_path = os.path.join(save_path,file_name)
 init_layout_graph_path = r"test_initial_layout_graph.txt"
-
+# sys.path.append(r"C:\Users\drago\OneDrive\Documents\700P4P\Unity_Simulation\FirstAttempt\Assets")
+# init_layout_graph_path = r"C:\Users\drago\OneDrive\Documents\700P4P\Unity_Simulation\FirstAttempt\Assets\layout_graph.txt"
 
 
 #treat all resource agents being added to the thing before and part  agents are instantiated as the initial graph
@@ -100,6 +106,18 @@ def msg_func(client,userdata,msg):
         file.write(msg_decoded + '\n')
         file.close()
 
+    if(msg.topic == "/partBids"):
+        file = open("bidding_log.txt","a")
+        file.write(str(datetime.datetime.now()) + ",")
+        file.write(msg_decoded + '\n')
+        file.close()
+
+    if(msg.topic == "/machineBids"):
+        file = open("bidding_log.txt","a")
+        file.write(str(datetime.datetime.now()) + ",")
+        file.write(msg_decoded + '\n')
+        file.close()
+
     
 
 #defining msg_func (shortening variable names)
@@ -126,6 +144,9 @@ f = open("movement_log.txt","w")
 f.write("")
 f.close()
 
+f = open("bidding_log.txt","w")
+f.write("")
+f.close()
 
 initTime = datetime.datetime.now()
 
