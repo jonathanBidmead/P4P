@@ -222,8 +222,13 @@ while (len(taskList) != 0):
                     taskDone = True
                 else:
                     partAgent.client.publish("/machining",agentName + "," + currentNode + "," + currentTask)
-                    while(not taskDone):
+                    prevTime = time.time()
+                    currentTime = prevTime
+                    while((not taskDone) and (currentTime - prevTime < 12)):
                         partAgent.client.loop(0.1)
+                    if(not taskDone):
+                        print("Deleting part because machine agent went off")
+                        exit()
 
 
 partAgent.client.publish("/partAgentLogging",partAgent.name + ",END")

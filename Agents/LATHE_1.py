@@ -127,7 +127,7 @@ while True:
 
     if(not machineBooked):
         if(acceptingBids):
-            if(partInMachine != "none"):
+            if(False):
                 pass
             else:
                 print("Accepting Bids")
