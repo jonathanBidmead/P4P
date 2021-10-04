@@ -6,7 +6,7 @@ sys.path.append(r'C:\Users\drago\OneDrive\Documents\GitHub\P4P')
 from MultiAgent import smartServer
 import datetime
 #creating graph agent instance
-agent = smartServer.smartMqtt("BUFFER_2")#CHANGE
+agent = smartServer.smartMqtt("PLATFORM_1")#CHANGE
 
 #creating/subscribing to pertinent mqtt topics
 agent.client.subscribe("/activeResources")
@@ -34,7 +34,7 @@ def msg_func(client,userdata,msg):
 agent.client.on_message = msg_func
 
 #add self to graph
-agent.client.publish("/activeResources","ADD,BUFFER_2,BUFFER,0 2,KR16 KR10")#CHANGE
+agent.client.publish("/activeResources","ADD,PLATFORM_1,BUFFER,0 2,KR16 KR10")#CHANGE
 
 while True:
     agent.client.loop(0.1)

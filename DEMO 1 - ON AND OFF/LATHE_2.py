@@ -165,6 +165,11 @@ while True:
     
     else:
         if(operationRequest):
+            prevTime = time.time()
+            currentTime = prevTime
+            while(currentTime - prevTime < 60):#DEBUG: SIMULATING A LONG PROCESS
+                currentTime = time.time()
+                latheAgent.client.loop(0.1)
             print("Operation completed")
             latheAgent.client.publish("/confirmation",machineName + "," + chosenPart[0] + "," + "done")
             machineBooked = False

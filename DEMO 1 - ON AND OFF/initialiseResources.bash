@@ -10,7 +10,7 @@ python KR16.py &
 python BUFFER_1.py & 
 python EXIT_PLATFORM_1.py & 
 python ENTRY_PLATFORM.py & 
-python BUFFER_2.py & 
+python PLATFORM_1.py & 
 #machine
 python LATHE_1.py & 
 python LATHE_2.py & 
@@ -22,8 +22,8 @@ python logging_server.py &
 # python OPCUA_SERVERS/KR16_2_OPCUA.py & 
 # python KR16_2.py & 
 #killing Lathe 2
-sleep 50
+sleep 500
 kill $L2_PID
 #reviving Lathe 2
-sleep 100
+sleep 500
 python LATHE_2.py &

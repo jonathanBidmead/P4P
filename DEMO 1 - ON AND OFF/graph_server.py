@@ -92,7 +92,7 @@ max_iters = 10000
 
 #number of seconds machines have to respond to a ping before being considered offline
 PINGING_TIMEOUT = 5#not used currently,. current implementation is to give each resource until the next ping happens to respond
-PING_FREQUENCY = 3
+PING_FREQUENCY = 6
 
 #breadth-first search through the graph to find a path
 def bfs(start, end):
@@ -203,9 +203,18 @@ def make_node_offline(node):
 #re-instantiate a node once it starts returning pings again
 def make_node_online(node):
     layout_graph[node] = offlineAgents[node]
+
+    for adj in offlineAgents[node]:
+        for key in layout_graph:
+            if (key == adj):
+                temp = set(layout_graph[key])
+                temp.add(node)
+                # print(temp)
+                layout_graph.update({key:temp})
     offlineAgents.pop(node)
     #logging this action
     graphAgent.client.publish("/graphLogging","ON," + str(node))
+    graphAgent.client.publish("/debug","BADREADD: " + str(layout_graph))
 
 #initial ping
 graphAgent.client.publish("/keepAlivePings","PING")

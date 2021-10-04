@@ -23,6 +23,8 @@ partInMachine = "none"
 
 machineName = "LATHE_1"
 
+currentlyProcessing = False
+
 def reset():
     global machineBooked
     global partBids
@@ -39,7 +41,6 @@ def reset():
     chosenPart = ("",0)
 
 
-
 def msg_func(client,userdata,msg):
     global acceptingBids
     global partBids
@@ -48,57 +49,62 @@ def msg_func(client,userdata,msg):
     global chosenPart
     global confirmationRecieved
     global partInMachine
-    
+    global currentlyProcessing
+
 
     msg_decoded = msg.payload.decode("utf-8")
     # print("Received message: " + msg.topic + " -> " + msg_decoded)
     topic = msg.topic
     msg_split = msg_decoded.split(",")
+    if (not currentlyProcessing or topic == "/keepAlivePings"):
+        # print("processing in msgfunc")
+        # if (topic != "/keepAlivePings"):
+        #     pass
 
-    if(topic == "/partBids"):
-        if(acceptingBids and (msg_split[2] in machineCapabilites)):
-            #Implement the bit where it ignores same agents
-            partBids.append((msg_split[0],float(msg_split[1])))
-            
-    if(topic == "/confirmation"):
-        if((not acceptingBids) and (not machineBooked)): 
-            if(msg_split[1] == machineName): #Add a check to see if the message is coming from the expected part agent?
-                confirmationRecieved = True
+        if(topic == "/partBids"):
+            if(acceptingBids and (msg_split[2] in machineCapabilites)):
+                #Implement the bit where it ignores same agents
+                partBids.append((msg_split[0],float(msg_split[1])))
+                
+        if(topic == "/confirmation"):
+            if((not acceptingBids) and (not machineBooked)): 
+                if(msg_split[1] == machineName): #Add a check to see if the message is coming from the expected part agent?
+                    confirmationRecieved = True
 
-    if(topic == "/machining"):
-        print("------------")
-        print(msg_split)
-        print(machineName)
-        print(chosenPart)
-        print("--------------------")
-        if(msg_split[1] == machineName and msg_split[0] == chosenPart[0]):
-            print("MachineBooked: " + str(machineBooked))
-            if(machineBooked):
-                operationRequest = True
+        if(topic == "/machining"):
+            print("------------")
+            print(msg_split)
+            print(machineName)
+            print(chosenPart)
+            print("--------------------")
+            if(msg_split[1] == machineName and msg_split[0] == chosenPart[0]):
+                print("MachineBooked: " + str(machineBooked))
+                if(machineBooked):
+                    operationRequest = True
 
-    if(msg.topic == "/keepAlivePings"):
-        if(msg_decoded == "PING"):
-            print("responding to ping")
-            agent = latheAgent#replace with current agent
-            agent.client.publish("/keepAlivePings",agent.name)
-    
-    if(msg.topic == "/cancellation" and msg_split[0] == chosenPart[0] and msg_split[1] == machineName):
-        print("Contract Cancelled")
-        reset()
+        if(msg.topic == "/keepAlivePings"):
+            if(msg_decoded == "PING"):
+                print("responding to ping")
+                agent = latheAgent#replace with current agent
+                agent.client.publish("/keepAlivePings",agent.name)
+        
+        if(msg.topic == "/cancellation" and msg_split[0] == chosenPart[0] and msg_split[1] == machineName):
+            print("Contract Cancelled")
+            reset()
 
-    if(msg.topic == "/isResourceAvailable"):
-        agent = latheAgent
-        if(msg_decoded == agent.name):
-            agent.client.publish("/isResourceAvailable",agent.name + ",YES")
+        if(msg.topic == "/isResourceAvailable"):
+            agent = latheAgent
+            if(msg_decoded == agent.name):
+                agent.client.publish("/isResourceAvailable",agent.name + ",YES")
 
-    if(msg.topic == "/partAgentLogging"):
-        if(partInMachine == "none"):
-            if(msg_split[1] == machineName):
-                partInMachine = msg_split[0]
-        else:
-            if(msg_split[0] == partInMachine):
-                if(msg_split[1] != machineName):
-                    partInMachine = "none"
+        if(msg.topic == "/partAgentLogging"):
+            if(partInMachine == "none"):
+                if(msg_split[1] == machineName):
+                    partInMachine = msg_split[0]
+            else:
+                if(msg_split[0] == partInMachine):
+                    if(msg_split[1] != machineName):
+                        partInMachine = "none"
 
     
 
@@ -165,8 +171,15 @@ while True:
     
     else:
         if(operationRequest):
-            print("Operation completed")
+            prevTime = time.time()
+            currentTime = prevTime
+            currentlyProcessing = True
+            while(currentTime - prevTime < 60):#DEBUG: SIMULATING A LONG PROCESS
+                currentTime = time.time()
+                latheAgent.client.loop(0.1)
+            currentlyProcessing = False
             latheAgent.client.publish("/confirmation",machineName + "," + chosenPart[0] + "," + "done")
+            print("Operation completed")
             machineBooked = False
             partBids = []
             acceptingBids = True
@@ -174,6 +187,7 @@ while True:
             prevTime = 0
             confirmationRecieved = False
             operationRequest = False
+            
                     
 
 
